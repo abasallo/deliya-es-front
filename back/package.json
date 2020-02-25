@@ -1,0 +1,40 @@
+{
+  "name": "deliya.es-back",
+  "description": "GraphQL NodeJS + Express Backend - Patisserie directly from small makers to consumers.",
+  "version": "0.1.0",
+  "private": true,
+  "author": "alvaro@basallo.es",
+  "main": "app.js",
+  "scripts": {
+    "prebuild": "rm -rf ./build/",
+    "build": "babel -d ./build/ ./src/",
+    "start": "nodemon --exec babel-node ./src/index.js",
+    "debug": "nodemon --exec babel-node ./src/index.js --inspect",
+    "test": "echo \"No test specified\" && exit 0",
+    "lint": "eslint --fix ./src"
+  },
+  "dependencies": {
+    "apollo-server": "^2.10.1",
+    "dotenv": "^8.2.0",
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "graphql": "^14.6.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "nodemon": "^2.0.2",
+    "prettier": "^1.19.1"
+  },
+  "engines": {
+    "node": "12.x"
+  }
+}
