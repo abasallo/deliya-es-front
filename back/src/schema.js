@@ -7,52 +7,23 @@ export default gql`
   }
 
   type Query {
-    eventStates: [EventState]!
-    eventState(id: ID!): EventState
+    users: [User]!
+    userById(id: ID!): User
+    userByUsername(username: String): User
   }
 
   type Mutation {
-    addBenchmarking(eventState: EventStateInput!): EventState
+    addUser(user: UserInput!): User
   }
 
-  type EventState {
+  type User {
     id: ID!
-    picture: String
-    name: String
-    description: String
-    map: GoogleMap
-    todoList: [ListItem]!
-    productList: [ListItem]!
+    username: String
+    password: String
   }
 
-  input EventStateInput {
-    picture: String
-    name: String
-    description: String
-    mapId: ID
-    todoList: [ID]!
-    productList: [ID]!
-  }
-
-  type GoogleMap {
-    id: ID!
-    title: String
-    src: String
-  }
-
-  input GoogleMapInput {
-    title: String
-    src: String
-  }
-
-  type ListItem {
-    id: ID!
-    primary: String
-    secondary: String
-  }
-
-  input ListItemInput {
-    primary: String
-    secondary: String
+  input UserInput {
+    username: String
+    password: String
   }
 `
