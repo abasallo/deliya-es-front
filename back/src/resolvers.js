@@ -4,7 +4,7 @@ export default {
   Query: {
     users: () => User.findAll(),
     userById: (parent, args) => User.findOne({ where: { id: args.id } }),
-    userByUsername: (parent, args) => User.findOne({ where: { username: args.id } })
+    userByUsername: (parent, args) => User.findOne({ where: { username: args.username } })
   },
 
   Mutation: {
