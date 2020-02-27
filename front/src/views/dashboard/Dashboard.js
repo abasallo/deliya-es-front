@@ -13,7 +13,6 @@ import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Box from '@material-ui/core/Box'
 
-import DashboardGrid from './DashboardGrid'
 import Copyright from '../../components/Copyright'
 
 const Dashboard = props => {
@@ -25,13 +24,18 @@ const Dashboard = props => {
           <Typography variant="h6" className="Title">
             Event Dashboard
           </Typography>
-          <Button>{props.emailState.email}</Button>
-          <Button onClick={() => props.emailState.setEmail('')}>Logout</Button>
+          <Button>{props.loginState.email}</Button>
+          <Button
+            onClick={() => {
+              props.loginState.setEmail('')
+              props.loginState.setToken('')
+            }}
+          >
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
-      <Container className="MainContainer">
-        <DashboardGrid eventState={props.eventState} />
-      </Container>
+      <Container className="MainContainer">Main Container</Container>
       <Box mt={8}>
         <Copyright />
       </Box>
@@ -40,9 +44,10 @@ const Dashboard = props => {
 }
 
 Dashboard.propTypes = {
-  emailState: PropTypes.shape({
+  loginState: PropTypes.shape({
     email: PropTypes.string,
-    setEmail: PropTypes.func
+    setEmail: PropTypes.func,
+    setToken: PropTypes.func
   }),
   eventState: PropTypes.object
 }

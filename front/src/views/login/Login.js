@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 
 import './Login.style.scss'
 
+import PropTypes from 'prop-types'
+
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
@@ -17,10 +19,11 @@ import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
-import PropTypes from 'prop-types'
+
+import { isUserPasswordCorrect } from '../../services/User'
 
 const Login = props => {
-  const [email, setEmail] = useState(props.emailState.email)
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   return (
@@ -37,9 +40,14 @@ const Login = props => {
         <form
           className="Form"
           noValidate
-          onSubmit={event => {
-            if (password) props.emailState.setEmail(email)
+          onSubmit={async event => {
             event.preventDefault()
+            if (await isUserPasswordCorrect(email, password)) {
+              props.loginState.setEmail(email)
+              props.loginState.setToken('token')
+            } else {
+              setPassword('')
+            }
           }}
         >
           <TextField
@@ -53,7 +61,9 @@ const Login = props => {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={event => setEmail(event.target.value)}
+            onChange={event => {
+              setEmail(event.target.value)
+            }}
           />
           <TextField
             variant="outlined"
@@ -92,9 +102,9 @@ const Login = props => {
 }
 
 Login.propTypes = {
-  emailState: PropTypes.shape({
-    email: PropTypes.string,
-    setEmail: PropTypes.func
+  loginState: PropTypes.shape({
+    setEmail: PropTypes.func,
+    setToken: PropTypes.func
   })
 }
 

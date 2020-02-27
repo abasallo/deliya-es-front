@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Suspense, useState } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
@@ -12,25 +12,25 @@ import Signup from './views/signup/Signup'
 
 import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
 
-const App = props => {
+const App = () => {
   const [email, setEmail] = useState('')
+  const [token, setToken] = useState('')
+
   return (
     <React.Fragment>
       <CssBaseline />
       <Router>
         <Switch>
           <Route path="/password-recovery">
-            <PasswordRecovery emailState={{ email, setEmail }} />
+            <PasswordRecovery />
           </Route>
           <Route path="/signup">
-            <Signup emailState={{ email, setEmail }} />
+            <Signup />
           </Route>
           <Route path="/">
-            {email ? (
-              <Dashboard emailState={{ email, setEmail }} eventState={props.eventState} />
-            ) : (
-              <Login emailState={{ email, setEmail }} />
-            )}
+            <Suspense fallback={<div>Cargando...</div>}>
+              {email && token ? <Dashboard loginState={{ email, setEmail, setToken }} /> : <Login loginState={{ setEmail, setToken }} />}
+            </Suspense>
           </Route>
         </Switch>
       </Router>

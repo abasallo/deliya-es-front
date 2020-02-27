@@ -23,7 +23,7 @@ import PropTypes from 'prop-types'
 const Signup = props => {
   const [names, setNames] = useState('')
   const [surnames, setSurnames] = useState('')
-  const [email, setEmail] = useState(props.emailState.email)
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [checkbox, setCheckbox] = useState(false)
   return (
@@ -41,7 +41,7 @@ const Signup = props => {
           className="Form"
           noValidate
           onSubmit={event => {
-            props.emailState.setEmail(email)
+            // TODO - Send data to server and set loginState
             props.history.push('/')
             event.preventDefault()
           }}
@@ -133,9 +133,10 @@ const Signup = props => {
 }
 
 Signup.propTypes = {
-  emailState: PropTypes.shape({
+  loginState: PropTypes.shape({
     email: PropTypes.string,
-    setEmail: PropTypes.func
+    setEmail: PropTypes.func,
+    setToken: PropTypes.func
   }),
   history: PropTypes.object
 }

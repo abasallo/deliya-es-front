@@ -17,7 +17,7 @@ import Copyright from '../../components/Copyright'
 import PropTypes from 'prop-types'
 
 const PasswordRecovery = props => {
-  const [email, setEmail] = useState(props.emailState.email)
+  const [email, setEmail] = useState('')
 
   return (
     <Container component="main" maxWidth="xs">
@@ -34,6 +34,7 @@ const PasswordRecovery = props => {
           className="Form"
           noValidate
           onSubmit={event => {
+            // TODO - Send data to server
             props.history.push('/')
             event.preventDefault()
           }}
@@ -49,7 +50,9 @@ const PasswordRecovery = props => {
             autoComplete="email"
             autoFocus
             value={email}
-            onChange={event => setEmail(event.target.value)}
+            onChange={event => {
+              setEmail(event.target.value)
+            }}
           />
           <div className="Button">
             <Button type="submit" fullWidth variant="contained" color="primary">
@@ -66,7 +69,7 @@ const PasswordRecovery = props => {
 }
 
 PasswordRecovery.propTypes = {
-  emailState: PropTypes.shape({
+  loginState: PropTypes.shape({
     email: PropTypes.string,
     setEmail: PropTypes.func
   }),
