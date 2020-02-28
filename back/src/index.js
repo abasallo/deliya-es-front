@@ -11,6 +11,6 @@ dotenv.config()
 
 initSequelize()
 
-new ApolloServer({ typeDefs, resolvers, introspection: true, playground: true })
+new ApolloServer({ typeDefs, resolvers })
   .listen({ port: process.env.PORT || 4000 })
   .then(({ url }) => console.log(`Server ready at ${url}`))

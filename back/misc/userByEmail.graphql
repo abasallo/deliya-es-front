@@ -1,0 +1,13 @@
+# .graphqlconfig=/home/alvaro/Projects/deliya.es/back!
+
+query {
+    userByEmail(email: "alvaro@basallo.es") {
+        id
+        names
+        surnames
+        email
+        password
+        isEmailContactAllowed
+    }
+}
+

@@ -7,9 +7,7 @@ export default gql`
   }
 
   type Query {
-    users: [User]!
-    userById(id: ID!): User
-    userByUsername(username: String): User
+    userByEmail(email: String): User
   }
 
   type Mutation {
@@ -18,12 +16,18 @@ export default gql`
 
   type User {
     id: ID!
-    username: String
-    password: String
+    names: String
+    surnames: String
+    email: String!
+    password: String!
+    isEmailContactAllowed: Boolean!
   }
 
   input UserInput {
-    username: String
-    password: String
+    names: String
+    surnames: String
+    email: String!
+    password: String!
+    isEmailContactAllowed: Boolean!
   }
 `
