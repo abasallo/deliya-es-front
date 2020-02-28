@@ -8,6 +8,7 @@ export default gql`
 
   type Query {
     userByEmail(email: String): User
+    login(email: String, password: String): String
   }
 
   type Mutation {

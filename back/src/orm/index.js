@@ -28,7 +28,7 @@ export const initSequelize = () => {
           names: 'Álvaro',
           surnames: 'Basallo Martínez',
           email: 'alvaro@basallo.es',
-          password: 'ojete',
+          password: '$2a$10$szbU0ZiERI8wFrbOaaTUnOqzkzKJAA4EJl6qRfGRZ8Moi07zipxTm',
           isEmailContactAllowed: true
         })
       )
