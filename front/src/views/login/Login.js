@@ -20,7 +20,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { isUserPasswordCorrect } from '../../services/User'
+import { checkUserPasswordByEmail } from '../../services/User'
 
 const Login = props => {
   const [email, setEmail] = useState('')
@@ -42,7 +42,7 @@ const Login = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            if (await isUserPasswordCorrect(email, password)) {
+            if (await checkUserPasswordByEmail(email, password)) {
               props.loginState.setEmail(email)
               props.loginState.setToken('token')
             } else {

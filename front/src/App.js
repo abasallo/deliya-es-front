@@ -18,22 +18,22 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <CssBaseline />
-      <Router>
-        <Switch>
-          <Route path="/password-recovery">
-            <PasswordRecovery />
-          </Route>
-          <Route path="/signup">
-            <Signup />
-          </Route>
-          <Route path="/">
-            <Suspense fallback={<div>Cargando...</div>}>
+      <Suspense fallback={<div>Cargando...</div>}>
+        <CssBaseline />
+        <Router>
+          <Switch>
+            <Route path="/password-recovery">
+              <PasswordRecovery />
+            </Route>
+            <Route path="/signup">
+              <Signup />
+            </Route>
+            <Route path="/">
               {email && token ? <Dashboard loginState={{ email, setEmail, setToken }} /> : <Login loginState={{ setEmail, setToken }} />}
-            </Suspense>
-          </Route>
-        </Switch>
-      </Router>
+            </Route>
+          </Switch>
+        </Router>
+      </Suspense>
     </React.Fragment>
   )
 }

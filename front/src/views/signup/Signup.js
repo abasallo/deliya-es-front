@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import { withRouter } from 'react-router'
 
+import PropTypes from 'prop-types'
+
 import './Signup.style.scss'
 
 import Typography from '@material-ui/core/Typography'
@@ -18,14 +20,15 @@ import Grid from '@material-ui/core/Grid'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
-import PropTypes from 'prop-types'
+
+import { addUser } from '../../services/User'
 
 const Signup = props => {
   const [names, setNames] = useState('')
   const [surnames, setSurnames] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [checkbox, setCheckbox] = useState(false)
+  const [isEmailContactAllowed, setRememberMe] = useState(false)
   return (
     <Container component="main" maxWidth="xs">
       <div className="Paper">
@@ -40,10 +43,10 @@ const Signup = props => {
         <form
           className="Form"
           noValidate
-          onSubmit={event => {
-            // TODO - Send data to server and set loginState
-            props.history.push('/')
+          onSubmit={async event => {
             event.preventDefault()
+            await addUser({ names, surnames, email, password, isEmailContactAllowed })
+            props.history.push('/')
           }}
         >
           <Grid container spacing={2}>
@@ -106,8 +109,8 @@ const Signup = props => {
                 control={<Checkbox value="allowExtraEmails" color="primary" />}
                 label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
                 id="Checkbox"
-                defaultValue={checkbox}
-                onChange={event => setCheckbox(event.target.value)}
+                defaultValue={isEmailContactAllowed}
+                onChange={event => setRememberMe(event.target.value)}
               />
             </Grid>
           </Grid>
