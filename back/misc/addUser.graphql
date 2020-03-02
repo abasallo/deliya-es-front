@@ -12,3 +12,5 @@ mutation($names: String, $surnames: String, $email: String!, $password: String!,
         isEmailContactAllowed
     }
 }
+
+

@@ -20,11 +20,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { checkUserPasswordByEmail } from '../../services/User'
+import { login } from '../../services/User'
 
 const Login = props => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isErrorStateActive, setErrorStateActive] = useState(false)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -42,12 +43,10 @@ const Login = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            if (await checkUserPasswordByEmail(email, password)) {
-              props.loginState.setEmail(email)
-              props.loginState.setToken('token')
-            } else {
-              setPassword('')
-            }
+            props.loginState.setEmail(email)
+            const token = await login(email, password)
+            props.loginState.setToken(token)
+            if (!token) setErrorStateActive(true)
           }}
         >
           <TextField
@@ -76,8 +75,14 @@ const Login = props => {
             id="password"
             autoComplete="current-password"
             value={password}
-            onChange={event => setPassword(event.target.value)}
+            onChange={event => {
+              if (!event.target.value) setErrorStateActive(false)
+              setPassword(event.target.value)
+            }}
+            error={isErrorStateActive}
+            helperText={isErrorStateActive ? 'Contraseña incorrecta' : ''}
           />
+
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" className="Checkbox" />
           <div className="Button">
             <Button type="submit" fullWidth variant="contained" color="primary">

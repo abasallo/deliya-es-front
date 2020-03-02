@@ -1,6 +1,6 @@
 # deliya.es-front
 
-ReactJS Frontend - Patisserie directly from small makers to consumers
+ReactJS - Patisserie directly from small makers to consumers
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 

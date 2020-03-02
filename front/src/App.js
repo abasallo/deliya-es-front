@@ -18,15 +18,15 @@ const App = () => {
 
   return (
     <React.Fragment>
+      <CssBaseline />
       <Suspense fallback={<div>Cargando...</div>}>
-        <CssBaseline />
         <Router>
           <Switch>
             <Route path="/password-recovery">
               <PasswordRecovery />
             </Route>
             <Route path="/signup">
-              <Signup />
+              <Signup loginState={{ email, setEmail }} />
             </Route>
             <Route path="/">
               {email && token ? <Dashboard loginState={{ email, setEmail, setToken }} /> : <Login loginState={{ setEmail, setToken }} />}

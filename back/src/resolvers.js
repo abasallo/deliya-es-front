@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken'
 // TODO - Add execute around for authentication and AuthenticationError throwing
 export default {
   Query: {
+    // TODO - This is not used, replace with the first secured endpoint
     userByEmail: (parent, { email }, { user }) => {
       if (user) return User.findOne({ where: { email: email } })
       else throw new AuthenticationError()

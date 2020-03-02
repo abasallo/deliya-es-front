@@ -11,11 +11,11 @@ import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import Box from '@material-ui/core/Box'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
@@ -28,7 +28,7 @@ const Signup = props => {
   const [surnames, setSurnames] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isEmailContactAllowed, setRememberMe] = useState(false)
+  const [isEmailContactAllowed, setIsEmailContactAllowed] = useState(false)
   return (
     <Container component="main" maxWidth="xs">
       <div className="Paper">
@@ -45,7 +45,8 @@ const Signup = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            await addUser({ names, surnames, email, password, isEmailContactAllowed })
+            const user = await addUser({ names, surnames, email, password, isEmailContactAllowed })
+            props.loginState.setEmail(user.email)
             props.history.push('/')
           }}
         >
@@ -106,11 +107,9 @@ const Signup = props => {
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
                 id="Checkbox"
-                defaultValue={isEmailContactAllowed}
-                onChange={event => setRememberMe(event.target.value)}
+                control={<Switch checked={isEmailContactAllowed} onChange={event => setIsEmailContactAllowed(event.target.checked)} />}
+                label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
               />
             </Grid>
           </Grid>

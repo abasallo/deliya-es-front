@@ -2,26 +2,19 @@ import { client } from '../index'
 
 import gql from 'graphql-tag'
 
-const USER_BY_EMAIL = gql`
-  query($email: String) {
-    userByEmail(email: $email) {
-      id
-      names
-      surnames
-      email
-      password
-      isEmailContactAllowed
-    }
+const LOGIN = gql`
+  query($email: String, $password: String) {
+    login(email: $email, password: $password)
   }
 `
 
-export const checkUserPasswordByEmail = async (email, password) => {
+export const login = async (email, password) => {
   try {
-    const { data } = await client.query({ query: USER_BY_EMAIL, variables: { email: email } })
-    return data.userByEmail.password === password
+    const { data } = await client.query({ query: LOGIN, variables: { email: email, password: password } })
+    return data.login
   } catch (error) {
     console.log(error) // TODO - Replace by something env dependent
-    return false
+    return ''
   }
 }
 
@@ -45,11 +38,11 @@ export const addUser = async user => {
     const { data } = await client.mutate({
       mutation: ADD_USER,
       variables: {
-        names: 'a',
-        surnames: 'b',
-        email: 'c',
-        password: 'd',
-        isEmailContactAllowed: false
+        names: user.names,
+        surnames: user.surnames,
+        email: user.email,
+        password: user.password,
+        isEmailContactAllowed: user.isEmailContactAllowed
       }
     })
     return data.addUser
