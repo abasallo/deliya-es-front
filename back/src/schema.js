@@ -7,12 +7,13 @@ export default gql`
   }
 
   type Query {
-    userByEmail(email: String): User
     login(email: String, password: String): String
+    requestPasswordRecoveryUrlOverEmail(email: String): Boolean
   }
 
   type Mutation {
     addUser(user: UserInput!): User
+    updateUser(user: UserInput!): User
   }
 
   type User {

@@ -17,7 +17,7 @@ initSequelize()
 new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => ({ user: getUserFromToken(getTokenFromRequest(req)) })
+  context: ({ req }) => ({ authenticatedUserEmail: getUserFromToken(getTokenFromRequest(req)) })
 })
   .listen({ port: process.env.PORT || 4000 })
   .then(({ url }) => console.log(`Server ready at ${url}`))
