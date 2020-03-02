@@ -23,10 +23,10 @@ const App = () => {
         <Router>
           <Switch>
             <Route path="/password-recovery">
-              <PasswordRecovery />
+              <PasswordRecovery loginState={{ setEmail }} />
             </Route>
             <Route path="/signup">
-              <Signup loginState={{ email, setEmail }} />
+              <Signup loginState={{ setEmail }} />
             </Route>
             <Route path="/">
               {email && token ? <Dashboard loginState={{ email, setEmail, setToken }} /> : <Login loginState={{ setEmail, setToken }} />}

@@ -136,9 +136,7 @@ const Signup = props => {
 
 Signup.propTypes = {
   loginState: PropTypes.shape({
-    email: PropTypes.string,
-    setEmail: PropTypes.func,
-    setToken: PropTypes.func
+    setEmail: PropTypes.func
   }),
   history: PropTypes.object
 }

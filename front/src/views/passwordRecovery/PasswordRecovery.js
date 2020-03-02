@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 
 import { withRouter } from 'react-router'
 
+import PropTypes from 'prop-types'
+
 import './PasswordRecovery.scss'
 
 import Typography from '@material-ui/core/Typography'
@@ -14,7 +16,8 @@ import Box from '@material-ui/core/Box'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
-import PropTypes from 'prop-types'
+
+import { requestPasswordRecoveryUrlOverEmail } from '../../services/User'
 
 const PasswordRecovery = props => {
   const [email, setEmail] = useState('')
@@ -33,10 +36,10 @@ const PasswordRecovery = props => {
         <form
           className="Form"
           noValidate
-          onSubmit={event => {
-            // TODO - Send data to server
-            props.history.push('/')
+          onSubmit={async event => {
             event.preventDefault()
+            console.log('Recovery email sent?: ' + (await requestPasswordRecoveryUrlOverEmail(email))) // TODO - Replace by code managing wrong email
+            props.history.push('/')
           }}
         >
           <TextField
@@ -70,7 +73,6 @@ const PasswordRecovery = props => {
 
 PasswordRecovery.propTypes = {
   loginState: PropTypes.shape({
-    email: PropTypes.string,
     setEmail: PropTypes.func
   }),
   history: PropTypes.object

@@ -18,6 +18,22 @@ export const login = async (email, password) => {
   }
 }
 
+const REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL = gql`
+  query($email: String) {
+    requestPasswordRecoveryUrlOverEmail(email: $email)
+  }
+`
+
+export const requestPasswordRecoveryUrlOverEmail = async email => {
+  try {
+    const { data } = await client.query({ query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, variables: { email: email } })
+    return data.requestPasswordRecoveryUrlOverEmail
+  } catch (error) {
+    console.log(error) // TODO - Replace by something env dependent
+    return ''
+  }
+}
+
 const ADD_USER = gql`
   mutation($names: String, $surnames: String, $email: String!, $password: String!, $isEmailContactAllowed: Boolean!) {
     addUser(
