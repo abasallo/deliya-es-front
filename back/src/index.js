@@ -6,11 +6,7 @@ import resolvers from './resolvers'
 
 import { initSequelize } from './orm'
 
-import dotenv from 'dotenv'
-
 import { getTokenFromRequest, getUserFromToken } from './modules'
-
-dotenv.config()
 
 initSequelize()
 

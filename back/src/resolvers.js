@@ -6,6 +6,8 @@ import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
 
+import { sendEmail } from './modules'
+
 // TODO - Add execute around for authentication and AuthenticationError throwing
 export default {
   Query: {
@@ -16,8 +18,9 @@ export default {
       else return ''
     },
     requestPasswordRecoveryUrlOverEmail: async (parent, { email }) => {
+      console.log('requestPasswordRecoveryUrlOverEmail')
       if (await User.findOne({ where: { email: email } })) {
-        console.log(jwt.sign({ email: email, date: Date.now() }, process.env.JWT_SECRET, { expiresIn: '10m' })) // TODO - Send over email
+        sendEmail(email, await jwt.sign({ email: email, date: Date.now() }, process.env.JWT_SECRET, { expiresIn: '10m' }))
         return true
       }
       return false
@@ -28,11 +31,22 @@ export default {
       if (User.findOne({ where: { email: user.email } })) {
         throw new AuthenticationError()
       }
-      User.create({ ...user })
+      User.create({
+        names: user.names,
+        surnames: user.surnames,
+        email: user.email,
+        password: await bcrypt.hash(user.password, 10),
+        isEmailContactAllowed: user.isEmailContactAllowed
+      })
     },
-    updateUser: async (parent, { user }, { authenticatedUserEmail }) => {
-      if (authenticatedUserEmail) return User.update({ ...user }, { where: { email: user.authenticatedUserEmail } })
-      else throw new AuthenticationError()
+    changePasswordWithToken: async (parent, { password, token }) => {
+      try {
+        const tokenExtractedEmail = jwt.verify(token, process.env.JWT_SECRET).email
+        User.update({ password: await bcrypt.hash(password, 10) }, { where: { email: tokenExtractedEmail } })
+        return true
+      } catch (error) {
+        return false
+      }
     }
   }
 }

@@ -13,7 +13,7 @@ export default gql`
 
   type Mutation {
     addUser(user: UserInput!): User
-    updateUser(user: UserInput!): User
+    changePasswordWithToken(password: String, token: String): Boolean
   }
 
   type User {
