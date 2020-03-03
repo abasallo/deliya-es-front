@@ -67,3 +67,22 @@ export const addUser = async user => {
     return {}
   }
 }
+
+const CHANGE_PASSWORD_WITH_TOKEN = gql`
+  mutation($password: String, $token: String) {
+    changePasswordWithToken(password: $password, token: $token)
+  }
+`
+
+export const changePasswordWithToken = async (password, token) => {
+  try {
+    const { data } = await client.mutate({
+      mutation: CHANGE_PASSWORD_WITH_TOKEN,
+      variables: { password: password, token: token }
+    })
+    return data.changePasswordWithToken
+  } catch (error) {
+    console.log(error) // TODO - Replace by something env dependent
+    return false
+  }
+}

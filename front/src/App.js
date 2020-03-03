@@ -9,8 +9,8 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import Dashboard from './views/dashboard/Dashboard'
 import Login from './views/login/Login'
 import Signup from './views/signup/Signup'
-
 import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
+import PasswordChange from './views/passwordChange/PasswordChange'
 
 const App = () => {
   const [email, setEmail] = useState('')
@@ -22,6 +22,9 @@ const App = () => {
       <Suspense fallback={<div>Cargando...</div>}>
         <Router>
           <Switch>
+            <Route path="/password-change/:token">
+              <PasswordChange />
+            </Route>
             <Route path="/password-recovery">
               <PasswordRecovery loginState={{ setEmail }} />
             </Route>

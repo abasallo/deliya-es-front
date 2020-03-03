@@ -93,7 +93,7 @@ const Signup = props => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                autoComplete="current-password"
+                autoComplete="new-password"
                 variant="outlined"
                 required
                 fullWidth
