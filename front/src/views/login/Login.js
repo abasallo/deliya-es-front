@@ -21,11 +21,13 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright'
 
 import { login } from '../../services/User'
+import { isEmailValid } from '../../modules'
 
 const Login = props => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isErrorStateActive, setErrorStateActive] = useState(false)
+  const [isEmailErrorActive, setIsEmailErrorActive] = useState(false)
+  const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -43,10 +45,13 @@ const Login = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            props.loginState.setEmail(email)
             const token = await login(email, password)
-            props.loginState.setToken(token)
-            if (!token) setErrorStateActive(true)
+            if (password && !token) setIsPasswordErrorActive(true)
+            if (email && !isEmailValid(email)) setIsEmailErrorActive(true)
+            if (!isEmailErrorActive && !isPasswordErrorActive) {
+              props.loginState.setEmail(email)
+              props.loginState.setToken(token)
+            }
           }}
         >
           <TextField
@@ -62,7 +67,10 @@ const Login = props => {
             value={email}
             onChange={event => {
               setEmail(event.target.value)
+              setIsEmailErrorActive(false)
             }}
+            error={isEmailErrorActive}
+            helperText={isEmailErrorActive ? 'Correo electrónico no válido' : ''}
           />
           <TextField
             variant="outlined"
@@ -76,11 +84,11 @@ const Login = props => {
             autoComplete="current-password"
             value={password}
             onChange={event => {
-              if (!event.target.value) setErrorStateActive(false)
               setPassword(event.target.value)
+              setIsPasswordErrorActive(false)
             }}
-            error={isErrorStateActive}
-            helperText={isErrorStateActive ? 'Contraseña incorrecta' : ''}
+            error={isPasswordErrorActive}
+            helperText={isPasswordErrorActive ? 'Contraseña incorrecta' : ''}
           />
 
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" className="Checkbox" />
@@ -109,6 +117,7 @@ const Login = props => {
 Login.propTypes = {
   loginState: PropTypes.shape({
     setEmail: PropTypes.func,
+    token: PropTypes.string,
     setToken: PropTypes.func
   })
 }
