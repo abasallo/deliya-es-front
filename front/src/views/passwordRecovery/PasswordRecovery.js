@@ -18,9 +18,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright'
 
 import { requestPasswordRecoveryUrlOverEmail } from '../../services/User'
+import Modal from '@material-ui/core/Modal'
 
 const PasswordRecovery = props => {
   const [email, setEmail] = useState('')
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -38,8 +41,8 @@ const PasswordRecovery = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            console.log('Recovery email sent?: ' + (await requestPasswordRecoveryUrlOverEmail(email))) // TODO - Replace by code managing wrong email
-            props.history.push('/')
+            const willEmailBeSent = await requestPasswordRecoveryUrlOverEmail(email)
+            if (willEmailBeSent) setIsModalOpen(true)
           }}
         >
           <TextField
@@ -67,6 +70,12 @@ const PasswordRecovery = props => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <Modal id="Modal" open={isModalOpen} onClose={() => props.history.push('/')}>
+        <div id="ModalContent">
+          <p>Se ha enviado un correo a la dirección electrónica indicada</p>
+          <p>con instrucciones para crear una nueva contraseña.</p>
+        </div>
+      </Modal>
     </Container>
   )
 }
