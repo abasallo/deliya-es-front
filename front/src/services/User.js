@@ -13,7 +13,6 @@ export const login = async (email, password) => {
     const { data } = await client.query({ query: LOGIN, variables: { email: email, password: password } })
     return data.login
   } catch (error) {
-    console.log(error) // TODO - Replace by something env dependent
     return ''
   }
 }
@@ -29,7 +28,6 @@ export const requestPasswordRecoveryUrlOverEmail = async email => {
     const { data } = await client.query({ query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, variables: { email: email } })
     return data.requestPasswordRecoveryUrlOverEmail
   } catch (error) {
-    console.log(error) // TODO - Replace by something env dependent
     return ''
   }
 }
@@ -63,7 +61,6 @@ export const addUser = async user => {
     })
     return data.addUser
   } catch (error) {
-    console.log(error) // TODO - Replace by something env dependent
     return {}
   }
 }
@@ -76,13 +73,9 @@ const CHANGE_PASSWORD_WITH_TOKEN = gql`
 
 export const changePasswordWithToken = async (password, token) => {
   try {
-    const { data } = await client.mutate({
-      mutation: CHANGE_PASSWORD_WITH_TOKEN,
-      variables: { password: password, token: token }
-    })
+    const { data } = await client.mutate({ mutation: CHANGE_PASSWORD_WITH_TOKEN, variables: { password: password, token: token } })
     return data.changePasswordWithToken
   } catch (error) {
-    console.log(error) // TODO - Replace by something env dependent
     return false
   }
 }

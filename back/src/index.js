@@ -1,21 +1,16 @@
+import './modules/dotenv'
+
+import './graphql/sequelize'
+
 import { ApolloServer } from 'apollo-server'
 
-import typeDefs from './schema'
+import typeDefs from './graphql/schema'
 
-import resolvers from './resolvers'
+import resolvers from './graphql/resolvers'
 
-import { initSequelize } from './orm'
-
-import { getTokenFromRequest, getUserFromToken } from './modules'
-
-initSequelize()
-
-new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: ({ req }) => ({ authenticatedUserEmail: getUserFromToken(getTokenFromRequest(req)) })
-})
-  .listen({ port: process.env.PORT || 4000 })
-  .then(({ url }) => console.log(`Server ready at ${url}`))
+import { getAuthenticatedUserFromRequest } from './modules/jwt'
 
 // TODO - Too much information on Authentication errors is returned, is OK in DEV, but should be 401 in PROD
+new ApolloServer({ typeDefs, resolvers, context: ({ req }) => ({ authenticatedUserEmail: getAuthenticatedUserFromRequest(req) }) })
+  .listen({ port: process.env.PORT || 4000 })
+  .then(({ url }) => console.log(`Server ready at ${url}`))
