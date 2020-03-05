@@ -22,13 +22,21 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright'
 
 import { addUser } from '../../services/User'
+import { isEmailValid } from '../../modules'
 
 const Signup = props => {
   const [names, setNames] = useState('')
   const [surnames, setSurnames] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordRepeated, setPasswordRepeated] = useState('')
   const [isEmailContactAllowed, setIsEmailContactAllowed] = useState(false)
+
+  const [isNamesErrorActive, setIsNamesErrorActive] = useState(false)
+  const [isSurnamesErrorActive, setIsSurnamesErrorActive] = useState(false)
+  const [isEmailErrorActive, setIsEmailErrorActive] = useState(false)
+  const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
+
   return (
     <Container component="main" maxWidth="xs">
       <div className="Paper">
@@ -45,9 +53,19 @@ const Signup = props => {
           noValidate
           onSubmit={async event => {
             event.preventDefault()
-            const user = await addUser({ names, surnames, email, password, isEmailContactAllowed })
-            props.loginState.setEmail(user.email)
-            props.history.push('/')
+
+            setIsNamesErrorActive(!names)
+            setIsSurnamesErrorActive(!surnames)
+            setIsEmailErrorActive(!email || !isEmailValid(email))
+            setIsPasswordErrorActive(!password || password !== passwordRepeated)
+
+            if (!isNamesErrorActive && !isSurnamesErrorActive && !isEmailErrorActive && !isPasswordErrorActive) {
+              const user = await addUser({ names, surnames, email, password, isEmailContactAllowed })
+              if (user) {
+                props.loginState.setEmail(user.email)
+                props.history.push('/')
+              }
+            }
           }}
         >
           <Grid container spacing={2}>
@@ -62,7 +80,12 @@ const Signup = props => {
                 label="Nombre/s"
                 autoFocus
                 defaultValue={names}
-                onChange={event => setNames(event.target.value)}
+                onChange={event => {
+                  setNames(event.target.value)
+                  setIsNamesErrorActive(false)
+                }}
+                error={isNamesErrorActive}
+                helperText={isNamesErrorActive ? '¿cómo te llamas?' : ''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -75,7 +98,12 @@ const Signup = props => {
                 name="surnames"
                 label="Apellido/s"
                 defaultValue={surnames}
-                onChange={event => setSurnames(event.target.value)}
+                onChange={event => {
+                  setSurnames(event.target.value)
+                  setIsSurnamesErrorActive(false)
+                }}
+                error={isSurnamesErrorActive}
+                helperText={isSurnamesErrorActive ? '¿cómo te apellidas? :-)' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -88,7 +116,12 @@ const Signup = props => {
                 name="email"
                 label="Correo electrónico"
                 defaultValue={email}
-                onChange={event => setEmail(event.target.value)}
+                onChange={event => {
+                  setEmail(event.target.value)
+                  setIsEmailErrorActive(false)
+                }}
+                error={isEmailErrorActive}
+                helperText={isEmailErrorActive ? 'no válido' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -102,7 +135,31 @@ const Signup = props => {
                 label="Contraseña"
                 type="password"
                 defaultValue={password}
-                onChange={event => setPassword(event.target.value)}
+                onChange={event => {
+                  setPassword(event.target.value)
+                  setIsPasswordErrorActive(false)
+                }}
+                error={!password}
+                helperText={!password ? 'al menos un caracter' : ''}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                autoComplete="new-password"
+                variant="outlined"
+                required
+                fullWidth
+                id="password-retyped"
+                name="password-retyped"
+                label="Contraseña (otra vez)"
+                type="password"
+                defaultValue={passwordRepeated}
+                onChange={event => {
+                  setPasswordRepeated(event.target.value)
+                  setIsPasswordErrorActive(false)
+                }}
+                error={isPasswordErrorActive}
+                helperText={isPasswordErrorActive ? 'no coinciden' : ''}
               />
             </Grid>
             <Grid item xs={12}>

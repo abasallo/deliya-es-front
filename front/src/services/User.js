@@ -61,7 +61,7 @@ export const addUser = async user => {
     })
     return data.addUser
   } catch (error) {
-    return {}
+    return undefined
   }
 }
 

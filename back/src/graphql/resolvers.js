@@ -32,7 +32,8 @@ export default {
   },
   Mutation: {
     addUser: async (parent, { user }) => {
-      if (User.findOne({ where: { email: user.email } })) throw new AuthenticationError() // TODO - Add specific, duplicated email error (unique field)
+      const alreadyExistentUser = await User.findOne({ where: { email: user.email } })
+      if (alreadyExistentUser) throw new AuthenticationError() // TODO - Add specific, duplicated email error (unique field)
       try {
         return User.create({
           names: user.names,
@@ -42,7 +43,7 @@ export default {
           isEmailContactAllowed: user.isEmailContactAllowed
         })
       } catch (error) {
-        return {}
+        return undefined
       }
     },
     changePasswordWithToken: async (parent, { password, token }) => {

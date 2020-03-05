@@ -32,7 +32,11 @@ const App = () => {
               <Signup loginState={{ setEmail }} />
             </Route>
             <Route path="/">
-              {email && token ? <Dashboard loginState={{ email, setEmail, setToken }} /> : <Login loginState={{ setEmail, setToken }} />}
+              {email && token ? (
+                <Dashboard loginState={{ email, setEmail, setToken }} />
+              ) : (
+                <Login loginState={{ email, setEmail, setToken }} />
+              )}
             </Route>
           </Switch>
         </Router>

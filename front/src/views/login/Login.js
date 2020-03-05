@@ -24,7 +24,7 @@ import { login } from '../../services/User'
 import { isEmailValid } from '../../modules'
 
 const Login = props => {
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(props.loginState.email)
   const [password, setPassword] = useState('')
   const [isEmailErrorActive, setIsEmailErrorActive] = useState(false)
   const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
@@ -116,6 +116,7 @@ const Login = props => {
 
 Login.propTypes = {
   loginState: PropTypes.shape({
+    email: PropTypes.string,
     setEmail: PropTypes.func,
     token: PropTypes.string,
     setToken: PropTypes.func
