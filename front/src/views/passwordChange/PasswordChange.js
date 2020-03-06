@@ -17,15 +17,25 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { changePasswordWithToken } from '../../services/User'
+import { changePasswordWithToken } from '../../services/graphql/User'
 import Modal from '@material-ui/core/Modal'
 
 const PasswordChange = props => {
-  const [password, setPassword] = useState('')
-  const [passwordRepeated, setPasswordRepeated] = useState('')
-  const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
+  const [state, setState] = useState({
+    password: '',
+    passwordRepeated: '',
+    passwordMismatch: false,
+    modal: { open: false, text: '' }
+  })
 
-  const [modalState, setModalState] = useState({ open: false, text: '' })
+  const onSubmit = async event => {
+    event.preventDefault()
+    if (state.password && state.password === state.passwordRepeated) {
+      const isPasswordChanged = await changePasswordWithToken(state.password, props.match.params.token)
+      if (isPasswordChanged) setState({ ...state, modal: { open: true, text: 'La contraseña ha sido cambiada con éxito.' } })
+      else setState({ ...state, modal: { open: true, text: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } })
+    } else setState({ ...state, passwordMismatch: true })
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -38,23 +48,7 @@ const PasswordChange = props => {
             Cambio de contraseña
           </Typography>
         </div>
-        <form
-          className="Form"
-          noValidate
-          onSubmit={async event => {
-            event.preventDefault()
-            if (password && password === passwordRepeated) {
-              const isPasswordChanged = await changePasswordWithToken(password, props.match.params.token)
-              if (isPasswordChanged) {
-                setModalState({ open: true, text: 'La contraseña ha sido cambiada con éxito.' })
-              } else {
-                setModalState({ open: true, text: 'Ha ocurrido un error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' })
-              }
-            } else {
-              setIsPasswordErrorActive(true)
-            }
-          }}
-        >
+        <form className="Form" noValidate onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -65,13 +59,10 @@ const PasswordChange = props => {
             type="password"
             id="password"
             autoComplete="new-password"
-            value={password}
-            onChange={event => {
-              setPassword(event.target.value)
-              setIsPasswordErrorActive(false)
-            }}
-            error={!password}
-            helperText={!password ? 'al menos un caracter' : ''}
+            value={state.password}
+            onChange={event => setState({ ...state, password: event.target.value, passwordMismatch: false })}
+            error={!state.password}
+            helperText={!state.password ? 'al menos un caracter' : ''}
           />
           <TextField
             variant="outlined"
@@ -83,13 +74,10 @@ const PasswordChange = props => {
             type="password"
             id="password-repeated"
             autoComplete="new-password"
-            value={passwordRepeated}
-            onChange={event => {
-              setPasswordRepeated(event.target.value)
-              setIsPasswordErrorActive(false)
-            }}
-            error={isPasswordErrorActive}
-            helperText={isPasswordErrorActive ? 'no coinciden' : ''}
+            value={state.passwordRepeated}
+            onChange={event => setState({ ...state, passwordRepeated: event.target.value, passwordMismatch: false })}
+            error={state.passwordMismatch}
+            helperText={state.passwordMismatch ? 'no coinciden' : ''}
           />
 
           <div className="Button">
@@ -102,9 +90,9 @@ const PasswordChange = props => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Modal id="Modal" open={modalState.open} onClose={() => props.history.push('/')}>
+      <Modal id="Modal" open={state.modal.open} onClose={() => props.history.push('/')}>
         <div id="ModalContent">
-          <p>{modalState.text}</p>
+          <p>{state.modal.text}</p>
         </div>
       </Modal>
     </Container>

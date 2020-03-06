@@ -20,14 +20,21 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { login } from '../../services/User'
+import { login } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'
 
 const Login = props => {
-  const [email, setEmail] = useState(props.loginState.email)
-  const [password, setPassword] = useState('')
-  const [isEmailErrorActive, setIsEmailErrorActive] = useState(false)
-  const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
+  const [state, setState] = useState({ email: props.appState.email, password: '', errors: { email: false, password: false } })
+
+  const onSubmit = async event => {
+    event.preventDefault()
+    const token = await login(state.email, state.password)
+    if (state.password && !token) setState({ ...state, errors: { ...state.errors, password: true } })
+    if (state.email && !isEmailValid(state.email)) setState({ ...state, errors: { ...state.errors, email: true } })
+    if (!state.errors.email && !state.errors.password) {
+      props.setAppState({ email: state.email, token: token })
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -40,20 +47,7 @@ const Login = props => {
             Autenticación
           </Typography>
         </div>
-        <form
-          className="Form"
-          noValidate
-          onSubmit={async event => {
-            event.preventDefault()
-            const token = await login(email, password)
-            if (password && !token) setIsPasswordErrorActive(true)
-            if (email && !isEmailValid(email)) setIsEmailErrorActive(true)
-            if (!isEmailErrorActive && !isPasswordErrorActive) {
-              props.loginState.setEmail(email)
-              props.loginState.setToken(token)
-            }
-          }}
-        >
+        <form className="Form" noValidate onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -64,13 +58,10 @@ const Login = props => {
             name="email"
             autoComplete="email"
             autoFocus
-            value={email}
-            onChange={event => {
-              setEmail(event.target.value)
-              setIsEmailErrorActive(false)
-            }}
-            error={isEmailErrorActive}
-            helperText={isEmailErrorActive ? 'Correo electrónico no válido' : ''}
+            value={state.email}
+            onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
+            error={state.errors.email}
+            helperText={state.errors.email ? 'Correo electrónico no válido' : ''}
           />
           <TextField
             variant="outlined"
@@ -82,13 +73,10 @@ const Login = props => {
             type="password"
             id="password"
             autoComplete="current-password"
-            value={password}
-            onChange={event => {
-              setPassword(event.target.value)
-              setIsPasswordErrorActive(false)
-            }}
-            error={isPasswordErrorActive}
-            helperText={isPasswordErrorActive ? 'Contraseña incorrecta' : ''}
+            value={state.password}
+            onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+            error={state.errors.password}
+            helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
           />
 
           <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" className="Checkbox" />
@@ -115,12 +103,8 @@ const Login = props => {
 }
 
 Login.propTypes = {
-  loginState: PropTypes.shape({
-    email: PropTypes.string,
-    setEmail: PropTypes.func,
-    token: PropTypes.string,
-    setToken: PropTypes.func
-  })
+  appState: PropTypes.object,
+  setAppState: PropTypes.func
 }
 
 export default Login

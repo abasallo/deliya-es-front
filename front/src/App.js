@@ -2,8 +2,6 @@ import React, { Suspense, useState } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import PropTypes from 'prop-types'
-
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 import Dashboard from './views/dashboard/Dashboard'
@@ -13,40 +11,36 @@ import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
 import PasswordChange from './views/passwordChange/PasswordChange'
 
 const App = () => {
-  const [email, setEmail] = useState('')
-  const [token, setToken] = useState('')
+  const [state, setState] = useState({ email: '', token: '' })
+  const setAppState = state => setState(state)
 
   return (
     <React.Fragment>
       <CssBaseline />
-      <Suspense fallback={<div>Cargando...</div>}>
-        <Router>
+      <Router>
+        <Suspense fallback={<div>Cargando...</div>}>
           <Switch>
             <Route path="/password-change/:token">
               <PasswordChange />
             </Route>
             <Route path="/password-recovery">
-              <PasswordRecovery loginState={{ setEmail }} />
+              <PasswordRecovery />
             </Route>
             <Route path="/signup">
-              <Signup loginState={{ setEmail }} />
+              <Signup appState={state} />
             </Route>
             <Route path="/">
-              {email && token ? (
-                <Dashboard loginState={{ email, setEmail, setToken }} />
+              {state.email && state.token ? (
+                <Dashboard appState={state} setAppState={setAppState} />
               ) : (
-                <Login loginState={{ email, setEmail, setToken }} />
+                <Login appState={state} setAppState={setAppState} />
               )}
             </Route>
           </Switch>
-        </Router>
-      </Suspense>
+        </Suspense>
+      </Router>
     </React.Fragment>
   )
-}
-
-App.propTypes = {
-  eventState: PropTypes.object
 }
 
 export default App

@@ -3,10 +3,17 @@
   background-color: #ffffff;
 }
 
-.Title {
+.Logo {
   flex-grow: 1;
-  color: #000000;
-  text-align: center;
+  margin: 5px;
+  max-width: 75px;
+  width: 100%;
+  height: auto;
+}
+
+.HeaderLoginButtons {
+  flex-grow: 1;
+  text-align: right;
 }
 
 .MainContainer {
@@ -19,3 +26,4 @@
   width: 100%;
   height: auto;
 }
+

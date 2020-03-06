@@ -21,21 +21,50 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { addUser } from '../../services/User'
+import { addUser } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'
 
 const Signup = props => {
-  const [names, setNames] = useState('')
-  const [surnames, setSurnames] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [passwordRepeated, setPasswordRepeated] = useState('')
-  const [isEmailContactAllowed, setIsEmailContactAllowed] = useState(false)
+  const [state, setState] = useState({
+    names: '',
+    surnames: '',
+    email: '',
+    password: '',
+    passwordRepeated: '',
+    contactAllowed: false,
+    errors: {
+      names: false,
+      surnames: false,
+      email: false,
+      password: false
+    }
+  })
 
-  const [isNamesErrorActive, setIsNamesErrorActive] = useState(false)
-  const [isSurnamesErrorActive, setIsSurnamesErrorActive] = useState(false)
-  const [isEmailErrorActive, setIsEmailErrorActive] = useState(false)
-  const [isPasswordErrorActive, setIsPasswordErrorActive] = useState(false)
+  const onSubmit = async event => {
+    event.preventDefault()
+    setState({
+      ...state,
+      errors: {
+        names: !state.names,
+        surnames: !state.surnames,
+        email: !state.email || !isEmailValid(state.email),
+        password: !state.password || state.password !== state.passwordRepeated
+      }
+    })
+
+    if (!state.errors.names && !state.errors.surnames && !state.errors.email && !state.errors.password) {
+      const user = await addUser({
+        names: state.names,
+        surnames: state.surnames,
+        email: state.email,
+        password: state.password,
+        contactAllowed: state.contactAllowed
+      })
+      if (user) {
+        props.history.push('/')
+      }
+    }
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -48,26 +77,7 @@ const Signup = props => {
             Alta
           </Typography>
         </div>
-        <form
-          className="Form"
-          noValidate
-          onSubmit={async event => {
-            event.preventDefault()
-
-            setIsNamesErrorActive(!names)
-            setIsSurnamesErrorActive(!surnames)
-            setIsEmailErrorActive(!email || !isEmailValid(email))
-            setIsPasswordErrorActive(!password || password !== passwordRepeated)
-
-            if (!isNamesErrorActive && !isSurnamesErrorActive && !isEmailErrorActive && !isPasswordErrorActive) {
-              const user = await addUser({ names, surnames, email, password, isEmailContactAllowed })
-              if (user) {
-                props.loginState.setEmail(user.email)
-                props.history.push('/')
-              }
-            }
-          }}
-        >
+        <form className="Form" noValidate onSubmit={onSubmit}>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
@@ -79,13 +89,10 @@ const Signup = props => {
                 name="names"
                 label="Nombre/s"
                 autoFocus
-                defaultValue={names}
-                onChange={event => {
-                  setNames(event.target.value)
-                  setIsNamesErrorActive(false)
-                }}
-                error={isNamesErrorActive}
-                helperText={isNamesErrorActive ? '¿cómo te llamas?' : ''}
+                defaultValue={state.names}
+                onChange={event => setState({ ...state, names: event.target.value, errors: { ...state.errors, names: false } })}
+                error={state.errors.names}
+                helperText={state.errors.names ? '¿cómo te llamas?' : ''}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -97,13 +104,10 @@ const Signup = props => {
                 id="surnames"
                 name="surnames"
                 label="Apellido/s"
-                defaultValue={surnames}
-                onChange={event => {
-                  setSurnames(event.target.value)
-                  setIsSurnamesErrorActive(false)
-                }}
-                error={isSurnamesErrorActive}
-                helperText={isSurnamesErrorActive ? '¿cómo te apellidas? :-)' : ''}
+                defaultValue={state.surnames}
+                onChange={event => setState({ ...state, surnames: event.target.value, errors: { ...state.errors, surnames: false } })}
+                error={state.errors.surnames}
+                helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -115,13 +119,10 @@ const Signup = props => {
                 id="email"
                 name="email"
                 label="Correo electrónico"
-                defaultValue={email}
-                onChange={event => {
-                  setEmail(event.target.value)
-                  setIsEmailErrorActive(false)
-                }}
-                error={isEmailErrorActive}
-                helperText={isEmailErrorActive ? 'no válido' : ''}
+                defaultValue={state.email}
+                onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
+                error={state.errors.email}
+                helperText={state.errors.email ? 'no válido' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -134,13 +135,10 @@ const Signup = props => {
                 name="password"
                 label="Contraseña"
                 type="password"
-                defaultValue={password}
-                onChange={event => {
-                  setPassword(event.target.value)
-                  setIsPasswordErrorActive(false)
-                }}
-                error={!password}
-                helperText={!password ? 'al menos un caracter' : ''}
+                defaultValue={state.password}
+                onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+                error={!state.password}
+                helperText={!state.password ? 'al menos un caracter' : ''}
               />
             </Grid>
             <Grid item xs={12}>
@@ -153,19 +151,20 @@ const Signup = props => {
                 name="password-retyped"
                 label="Contraseña (otra vez)"
                 type="password"
-                defaultValue={passwordRepeated}
-                onChange={event => {
-                  setPasswordRepeated(event.target.value)
-                  setIsPasswordErrorActive(false)
-                }}
-                error={isPasswordErrorActive}
-                helperText={isPasswordErrorActive ? 'no coinciden' : ''}
+                defaultValue={state.passwordRepeated}
+                onChange={event =>
+                  setState({ ...state, passwordRepeated: event.target.value, errors: { ...state.errors, passwordRepeated: false } })
+                }
+                error={state.errors.password}
+                helperText={state.errors.password ? 'no coinciden' : ''}
               />
             </Grid>
             <Grid item xs={12}>
               <FormControlLabel
                 id="Checkbox"
-                control={<Switch checked={isEmailContactAllowed} onChange={event => setIsEmailContactAllowed(event.target.checked)} />}
+                control={
+                  <Switch checked={state.contactAllowed} onChange={event => setState({ ...state, contactAllowed: event.target.checked })} />
+                }
                 label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
               />
             </Grid>
@@ -192,9 +191,7 @@ const Signup = props => {
 }
 
 Signup.propTypes = {
-  loginState: PropTypes.shape({
-    setEmail: PropTypes.func
-  }),
+  appState: PropTypes.object,
   history: PropTypes.object
 }
 

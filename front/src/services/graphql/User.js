@@ -1,12 +1,6 @@
-import { client } from '../index'
+import { client } from '../../index'
 
-import gql from 'graphql-tag'
-
-const LOGIN = gql`
-  query($email: String, $password: String) {
-    login(email: $email, password: $password)
-  }
-`
+import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './queries'
 
 export const login = async (email, password) => {
   try {
@@ -17,12 +11,6 @@ export const login = async (email, password) => {
   }
 }
 
-const REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL = gql`
-  query($email: String) {
-    requestPasswordRecoveryUrlOverEmail(email: $email)
-  }
-`
-
 export const requestPasswordRecoveryUrlOverEmail = async email => {
   try {
     const { data } = await client.query({ query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, variables: { email: email } })
@@ -31,21 +19,6 @@ export const requestPasswordRecoveryUrlOverEmail = async email => {
     return ''
   }
 }
-
-const ADD_USER = gql`
-  mutation($names: String, $surnames: String, $email: String!, $password: String!, $isEmailContactAllowed: Boolean!) {
-    addUser(
-      user: { names: $names, surnames: $surnames, email: $email, password: $password, isEmailContactAllowed: $isEmailContactAllowed }
-    ) {
-      id
-      names
-      surnames
-      email
-      password
-      isEmailContactAllowed
-    }
-  }
-`
 
 export const addUser = async user => {
   try {
@@ -56,7 +29,7 @@ export const addUser = async user => {
         surnames: user.surnames,
         email: user.email,
         password: user.password,
-        isEmailContactAllowed: user.isEmailContactAllowed
+        isEmailContactAllowed: user.contactAllowed
       }
     })
     return data.addUser
@@ -64,12 +37,6 @@ export const addUser = async user => {
     return undefined
   }
 }
-
-const CHANGE_PASSWORD_WITH_TOKEN = gql`
-  mutation($password: String, $token: String) {
-    changePasswordWithToken(password: $password, token: $token)
-  }
-`
 
 export const changePasswordWithToken = async (password, token) => {
   try {

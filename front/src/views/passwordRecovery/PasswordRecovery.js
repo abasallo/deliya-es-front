@@ -17,13 +17,16 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright'
 
-import { requestPasswordRecoveryUrlOverEmail } from '../../services/User'
+import { requestPasswordRecoveryUrlOverEmail } from '../../services/graphql/User'
 import Modal from '@material-ui/core/Modal'
 
 const PasswordRecovery = props => {
-  const [email, setEmail] = useState('')
+  const [state, setState] = useState({ email: '', modalOpen: false })
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const onSubmit = async event => {
+    event.preventDefault()
+    if (await requestPasswordRecoveryUrlOverEmail(state.email)) setState({ ...state, modalOpen: true })
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -36,15 +39,7 @@ const PasswordRecovery = props => {
             Recuperación de contraseña
           </Typography>
         </div>
-        <form
-          className="Form"
-          noValidate
-          onSubmit={async event => {
-            event.preventDefault()
-            const willEmailBeSent = await requestPasswordRecoveryUrlOverEmail(email)
-            if (willEmailBeSent) setIsModalOpen(true)
-          }}
-        >
+        <form className="Form" noValidate onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -55,10 +50,8 @@ const PasswordRecovery = props => {
             name="email"
             autoComplete="email"
             autoFocus
-            value={email}
-            onChange={event => {
-              setEmail(event.target.value)
-            }}
+            value={state.email}
+            onChange={event => setState({ email: event.target.value, modalOpen: false })}
           />
           <div className="Button">
             <Button type="submit" fullWidth variant="contained" color="primary">
@@ -70,7 +63,7 @@ const PasswordRecovery = props => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Modal id="Modal" open={isModalOpen} onClose={() => props.history.push('/')}>
+      <Modal id="Modal" open={state.modalOpen} onClose={() => props.history.push('/')}>
         <div id="ModalContent">
           <p>Se ha enviado un correo a la dirección electrónica indicada</p>
           <p>con instrucciones para crear una nueva contraseña.</p>
@@ -81,9 +74,6 @@ const PasswordRecovery = props => {
 }
 
 PasswordRecovery.propTypes = {
-  loginState: PropTypes.shape({
-    setEmail: PropTypes.func
-  }),
   history: PropTypes.object
 }
 
