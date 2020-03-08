@@ -19,7 +19,7 @@ import Switch from '@material-ui/core/Switch'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
-import Copyright from '../../components/Copyright'
+import Copyright from '../../components/Copyright/Copyright'
 
 import { addUser } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'

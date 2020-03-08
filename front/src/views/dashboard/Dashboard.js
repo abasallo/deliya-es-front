@@ -12,8 +12,8 @@ import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Box from '@material-ui/core/Box'
 
-import Copyright from '../../components/Copyright'
-import Carousel from '../../components/Carousel'
+import Copyright from '../../components/Copyright/Copyright'
+import Carousel from '../../components/Carousel/Carousel'
 
 const Dashboard = props => {
   return (

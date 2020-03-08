@@ -2,11 +2,11 @@ import React from 'react'
 
 import './Carousel.styles.scss'
 
-import Img1 from '../images/1.jpg'
-import Img2 from '../images/2.jpg'
-import Img3 from '../images/3.jpg'
-import Img4 from '../images/4.jpg'
-import Img5 from '../images/5.jpg'
+import Img1 from '../../images/data/1.jpg'
+import Img2 from '../../images/data/2.jpg'
+import Img3 from '../../images/data/3.jpg'
+import Img4 from '../../images/data/4.jpg'
+import Img5 from '../../images/data/5.jpg'
 
 import Slider from 'react-slick'
 

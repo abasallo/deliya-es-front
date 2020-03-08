@@ -1,6 +1,6 @@
 import { client } from '../../index'
 
-import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './queries'
+import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './User.queries'
 
 export const login = async (email, password) => {
   try {

@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
-import Copyright from '../../components/Copyright'
+import Copyright from '../../components/Copyright/Copyright'
 
 import { requestPasswordRecoveryUrlOverEmail } from '../../services/graphql/User'
 import Modal from '@material-ui/core/Modal'

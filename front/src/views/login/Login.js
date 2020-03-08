@@ -18,7 +18,7 @@ import Grid from '@material-ui/core/Grid'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
-import Copyright from '../../components/Copyright'
+import Copyright from '../../components/Copyright/Copyright'
 
 import { login } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'
