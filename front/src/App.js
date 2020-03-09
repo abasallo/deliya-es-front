@@ -2,6 +2,9 @@ import React, { Suspense, useState } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
+import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import { customMUITheme } from './customMUITheme'
+
 import CssBaseline from '@material-ui/core/CssBaseline'
 
 import Dashboard from './views/dashboard/Dashboard'
@@ -15,7 +18,7 @@ const App = () => {
   const setAppState = state => setState(state)
 
   return (
-    <React.Fragment>
+    <ThemeProvider theme={customMUITheme}>
       <CssBaseline />
       <Router>
         <Suspense fallback={<div>Cargando...</div>}>
@@ -39,7 +42,7 @@ const App = () => {
           </Switch>
         </Suspense>
       </Router>
-    </React.Fragment>
+    </ThemeProvider>
   )
 }
 
