@@ -2,19 +2,18 @@ import React, { useState } from 'react'
 
 import { Link } from 'react-router-dom'
 
-import './Login.style.scss'
-
 import PropTypes from 'prop-types'
 
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
+import Typography from '@material-ui/core/Typography'
+import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
+import Checkbox from '@material-ui/core/Checkbox'
+
+import { AvatarContainer, Button, CheckboxContainer } from './Login.styled.components'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
@@ -38,16 +37,16 @@ const Login = props => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div className="Paper">
-        <div className="Avatar">
+      <div>
+        <AvatarContainer>
           <Avatar>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Autenticación
           </Typography>
-        </div>
-        <form className="Form" noValidate onSubmit={onSubmit}>
+        </AvatarContainer>
+        <form noValidate onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -78,13 +77,12 @@ const Login = props => {
             error={state.errors.password}
             helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
           />
-
-          <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" className="Checkbox" />
-          <div className="Button">
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Entrar
-            </Button>
-          </div>
+          <CheckboxContainer>
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" />
+          </CheckboxContainer>
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Entrar
+          </Button>
           <Grid container>
             <Grid item xs>
               <Link to="/password-recovery">¿Olvidaste tu contraseña?</Link>
