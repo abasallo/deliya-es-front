@@ -2,7 +2,7 @@ import React, { Suspense, useState } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import ThemeProvider from '@material-ui/core/styles/MuiThemeProvider'
+import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import { customMUITheme } from './customMUITheme'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -18,31 +18,33 @@ const App = () => {
   const setAppState = state => setState(state)
 
   return (
-    <ThemeProvider theme={customMUITheme}>
-      <CssBaseline />
-      <Router>
-        <Suspense fallback={<div>Cargando...</div>}>
-          <Switch>
-            <Route path="/password-change/:token">
-              <PasswordChange />
-            </Route>
-            <Route path="/password-recovery">
-              <PasswordRecovery />
-            </Route>
-            <Route path="/signup">
-              <Signup appState={state} />
-            </Route>
-            <Route path="/">
-              {state.email && state.token ? (
-                <Dashboard appState={state} setAppState={setAppState} />
-              ) : (
-                <Login appState={state} setAppState={setAppState} />
-              )}
-            </Route>
-          </Switch>
-        </Suspense>
-      </Router>
-    </ThemeProvider>
+    <MuiThemeProvider theme={customMUITheme}>
+      <StylesProvider injectFirst>
+        <CssBaseline />
+        <Router>
+          <Suspense fallback={<div>Cargando...</div>}>
+            <Switch>
+              <Route path="/password-change/:token">
+                <PasswordChange />
+              </Route>
+              <Route path="/password-recovery">
+                <PasswordRecovery />
+              </Route>
+              <Route path="/signup">
+                <Signup appState={state} />
+              </Route>
+              <Route path="/">
+                {state.email && state.token ? (
+                  <Dashboard appState={state} setAppState={setAppState} />
+                ) : (
+                  <Login appState={state} setAppState={setAppState} />
+                )}
+              </Route>
+            </Switch>
+          </Suspense>
+        </Router>
+      </StylesProvider>
+    </MuiThemeProvider>
   )
 }
 
