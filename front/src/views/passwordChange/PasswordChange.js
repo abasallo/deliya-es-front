@@ -4,21 +4,19 @@ import { withRouter } from 'react-router'
 
 import PropTypes from 'prop-types'
 
-import './PasswordChange.scss'
-
 import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
 import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
+
+import { AvatarContainer, Button, Modal } from './PasswordChange.styled.components'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
 import { changePasswordWithToken } from '../../services/graphql/User'
-import Modal from '@material-ui/core/Modal'
 
 const PasswordChange = props => {
   const [state, setState] = useState({
@@ -39,16 +37,16 @@ const PasswordChange = props => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div className="Paper">
-        <div className="Avatar">
+      <div>
+        <AvatarContainer>
           <Avatar>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Cambio de contraseña
           </Typography>
-        </div>
-        <form className="Form" noValidate onSubmit={onSubmit}>
+        </AvatarContainer>
+        <form noValidate onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -80,20 +78,16 @@ const PasswordChange = props => {
             helperText={state.passwordMismatch ? 'no coinciden' : ''}
           />
 
-          <div className="Button">
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Enviar nueva contraseña
-            </Button>
-          </div>
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Enviar nueva contraseña
+          </Button>
         </form>
       </div>
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Modal id="Modal" open={state.modal.open} onClose={() => props.history.push('/')}>
-        <div id="ModalContent">
-          <p>{state.modal.text}</p>
-        </div>
+      <Modal open={state.modal.open} onClose={() => props.history.push('/')}>
+        <div>{state.modal.text}</div>
       </Modal>
     </Container>
   )

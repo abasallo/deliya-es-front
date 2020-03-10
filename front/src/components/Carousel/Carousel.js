@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './Carousel.styles.scss'
+import { SliderPicture } from './Carousel.styled.components'
 
 import Img1 from '../../images/data/1.jpg'
 import Img2 from '../../images/data/2.jpg'
@@ -23,11 +23,11 @@ const Carousel = () => {
 
   return (
     <Slider {...settings}>
-      <img src={Img1} className="SliderPictures" alt="" />
-      <img src={Img2} className="SliderPictures" alt="" />
-      <img src={Img3} className="SliderPictures" alt="" />
-      <img src={Img4} className="SliderPictures" alt="" />
-      <img src={Img5} className="SliderPictures" alt="" />
+      <SliderPicture src={Img1} alt="" />
+      <SliderPicture src={Img2} alt="" />
+      <SliderPicture src={Img3} alt="" />
+      <SliderPicture src={Img4} alt="" />
+      <SliderPicture src={Img5} alt="" />
     </Slider>
   )
 }

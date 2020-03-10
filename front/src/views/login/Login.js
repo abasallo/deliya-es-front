@@ -8,12 +8,11 @@ import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
 import Checkbox from '@material-ui/core/Checkbox'
 
-import { AvatarContainer, Button, CheckboxContainer } from './Login.styled.components'
+import { AvatarContainer, Button, FormControlLabel } from './Login.styled.components'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
@@ -37,62 +36,58 @@ const Login = props => {
 
   return (
     <Container component="main" maxWidth="xs">
-      <div>
-        <AvatarContainer>
-          <Avatar>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Autenticación
-          </Typography>
-        </AvatarContainer>
-        <form noValidate onSubmit={onSubmit}>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Correo electrónico"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={state.email}
-            onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
-            error={state.errors.email}
-            helperText={state.errors.email ? 'Correo electrónico no válido' : ''}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Contraseña"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={state.password}
-            onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
-            error={state.errors.password}
-            helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
-          />
-          <CheckboxContainer>
-            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" />
-          </CheckboxContainer>
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            Entrar
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link to="/password-recovery">¿Olvidaste tu contraseña?</Link>
-            </Grid>
-            <Grid item>
-              <Link to="/signup">¿Eres nuevo? ¡Date de alta!</Link>
-            </Grid>
+      <AvatarContainer>
+        <Avatar>
+          <LockOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Autenticación
+        </Typography>
+      </AvatarContainer>
+      <form noValidate onSubmit={onSubmit}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Correo electrónico"
+          name="email"
+          autoComplete="email"
+          autoFocus
+          value={state.email}
+          onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
+          error={state.errors.email}
+          helperText={state.errors.email ? 'Correo electrónico no válido' : ''}
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Contraseña"
+          type="password"
+          id="password"
+          autoComplete="current-password"
+          value={state.password}
+          onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+          error={state.errors.password}
+          helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
+        />
+        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" />
+        <Button type="submit" fullWidth variant="contained" color="primary">
+          Entrar
+        </Button>
+        <Grid container>
+          <Grid item xs>
+            <Link to="/password-recovery">¿Olvidaste tu contraseña?</Link>
           </Grid>
-        </form>
-      </div>
+          <Grid item>
+            <Link to="/signup">¿Eres nuevo? ¡Date de alta!</Link>
+          </Grid>
+        </Grid>
+      </form>
       <Box mt={8}>
         <Copyright />
       </Box>

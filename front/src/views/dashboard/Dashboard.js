@@ -2,15 +2,14 @@ import React from 'react'
 
 import PropTypes from 'prop-types'
 
-import './Dashboard.styles.scss'
+import logo from '../../images/logo.png'
 
-import Logo from '../../images/logo.png'
-
-import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
-import Container from '@material-ui/core/Container'
+
 import Box from '@material-ui/core/Box'
+
+import { AppBar, Logo, HeaderLoginButtons, Container } from './Dashboard.styled.components'
 
 import Copyright from '../../components/Copyright/Copyright'
 import Carousel from '../../components/Carousel/Carousel'
@@ -18,16 +17,16 @@ import Carousel from '../../components/Carousel/Carousel'
 const Dashboard = props => {
   return (
     <React.Fragment>
-      <AppBar position="static" id="AppBar">
+      <AppBar position="static">
         <Toolbar>
-          <img src={Logo} alt="Logo" className="Logo" />
-          <div className="HeaderLoginButtons">
+          <Logo src={logo} alt="Logo" />
+          <HeaderLoginButtons>
             <Button>{props.appState.email}</Button>
             <Button onClick={() => props.setAppState({ email: '', token: '' })}>Logout</Button>
-          </div>
+          </HeaderLoginButtons>
         </Toolbar>
       </AppBar>
-      <Container className="MainContainer">
+      <Container>
         <Carousel />
       </Container>
       <Box mt={8}>
