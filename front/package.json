@@ -39,12 +39,8 @@
     "prettier": "^1.19.1",
     "prop-types": "^15.7.2"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint --fix ."
+  "engines": {
+    "node": "12.x"
   },
   "browserslist": {
     "production": [
@@ -57,5 +53,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "scripts": {
+    "eject": "react-scripts eject",
+    "test": "react-scripts test",
+    "lint": "eslint --fix .",
+    "build": "react-scripts build",
+    "start": "react-scripts start"
   }
 }
