@@ -4,3 +4,5 @@ node_modules/
 coverage/
 
 *.sqlite*
+
+test-report.html

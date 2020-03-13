@@ -30,6 +30,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^25.1.0",
+    "jest-html-reporter": "^2.8.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1"
   },
@@ -38,11 +39,12 @@
   },
   "scripts": {
     "lint": "eslint --fix ./src",
-    "test": "jest",
-    "coverage": "jest --collectCoverage=true",
+    "test": "jest --testEnvironment=node",
+    "test-reports": "jest --testEnvironment=node --testResultsProcessor=./node_modules/jest-html-reporter --collectCoverage=true",
     "prebuild": "rm -rf ./build/",
     "build": "babel -d ./build/ ./src/",
     "start": "nodemon --exec babel-node src/server.js",
     "debug": "nodemon --exec babel-node src/server.js --inspect"
   }
 }
+
