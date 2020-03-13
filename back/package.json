@@ -1,6 +1,6 @@
 {
   "name": "deliya.es-back",
-  "description": "GraphQL NodeJS + Express Backend - Patisserie directly from small makers to consumers.",
+  "description": "GraphQL NodeJS - Patisserie directly from small makers to consumers.",
   "version": "0.1.0",
   "private": true,
   "author": "alvaro@basallo.es",
@@ -29,6 +29,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "prettier": "^1.19.1"
   },
@@ -36,7 +37,7 @@
     "node": "12.x"
   },
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0",
+    "test": "jest",
     "lint": "eslint --fix ./src",
     "prebuild": "rm -rf ./build/",
     "build": "babel -d ./build/ ./src/",
