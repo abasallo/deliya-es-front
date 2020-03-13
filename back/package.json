@@ -37,8 +37,9 @@
     "node": "12.x"
   },
   "scripts": {
-    "test": "jest",
     "lint": "eslint --fix ./src",
+    "test": "jest",
+    "coverage": "jest --collectCoverage=true",
     "prebuild": "rm -rf ./build/",
     "build": "babel -d ./build/ ./src/",
     "start": "nodemon --exec babel-node src/server.js",
