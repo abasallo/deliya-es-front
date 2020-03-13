@@ -1,0 +1,48 @@
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
+jobs:
+  back-build-and-test:
+    working_directory: ~/deliya.es/back  
+    executor:
+      name: node/default
+    steps:
+      - checkout:
+          path: ~/deliya.es
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run test-reports
+            - store_artifacts:
+                path: test-report.html
+                prefix: tests
+            - store_artifacts:
+                path: coverage
+                prefix: coverage
+            - store_test_results:
+                path: test-report.html
+  front-build-and-test:
+    working_directory: ~/deliya.es/front  
+    executor:
+      name: node/default
+    steps:
+      - checkout:
+          path: ~/deliya.es
+      - node/with-cache:
+          steps:
+            - run: npm install
+            - run: npm run test-reports
+            - store_artifacts:
+                path: test-report.html
+                prefix: tests
+            - store_artifacts:
+                path: coverage
+                prefix: coverage
+            - store_test_results:
+                path: test-report.html
+workflows:
+    back-build-and-test:
+      jobs:
+        - back-build-and-test
+        - front-build-and-test
+        
