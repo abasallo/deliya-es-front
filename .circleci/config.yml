@@ -2,13 +2,14 @@ version: 2.1
 orbs:
   node: circleci/node@1.1.6
 jobs:
-  back-build-and-test:
+  back-build-test-and-docker:
     working_directory: ~/deliya.es/back  
     executor:
       name: node/default
     steps:
       - checkout:
           path: ~/deliya.es
+      - setup_remote_docker
       - node/with-cache:
           steps:
             - run: npm install
@@ -21,13 +22,23 @@ jobs:
                 prefix: coverage
             - store_test_results:
                 path: test-report.html
-  front-build-and-test:
+            - run:
+                name: docker-image
+                command: |
+                  APP_NAME=deliya-es-back
+                  TAG=latest
+                  docker build -t $APP_NAME:$TAG .
+                  docker login --username=alvaro@basallo.es --password=$HEROKU_AUTH_TOKEN registry.heroku.com
+                  docker tag $APP_NAME:$TAG registry.heroku.com/$APP_NAME
+                  docker push registry.heroku.com/$APP_NAME
+  front-build-test-and-docker:
     working_directory: ~/deliya.es/front  
     executor:
       name: node/default
     steps:
       - checkout:
           path: ~/deliya.es
+      - setup_remote_docker
       - node/with-cache:
           steps:
             - run: npm install
@@ -40,9 +51,18 @@ jobs:
                 prefix: coverage
             - store_test_results:
                 path: test-report.html
+            - run:
+                name: docker-image
+                command: |
+                  APP_NAME=deliya-es-front
+                  TAG=latest
+                  docker build -t $APP_NAME:$TAG .
+                  docker login --username=alvaro@basallo.es --password=$HEROKU_AUTH_TOKEN registry.heroku.com
+                  docker tag $APP_NAME:$TAG registry.heroku.com/$APP_NAME
+                  docker push registry.heroku.com/$APP_NAME
 workflows:
-    back-build-and-test:
+    back-build-test-and-docker:
       jobs:
-        - back-build-and-test
-        - front-build-and-test
+        - back-build-test-and-docker
+        - front-build-test-and-docker
         
