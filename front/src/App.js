@@ -7,7 +7,7 @@ import { customMUITheme } from './customMUITheme'
 
 import CssBaseline from '@material-ui/core/CssBaseline'
 
-import Dashboard from './views/dashboard/Dashboard'
+import CarouselDashboard from './views/dashboard/CarouselDashboard'
 import Login from './views/login/Login'
 import Signup from './views/signup/Signup'
 import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
@@ -35,7 +35,7 @@ const App = () => {
               </Route>
               <Route path="/">
                 {state.email && state.token ? (
-                  <Dashboard appState={state} setAppState={setAppState} />
+                  <CarouselDashboard appState={state} setAppState={setAppState} />
                 ) : (
                   <Login appState={state} setAppState={setAppState} />
                 )}

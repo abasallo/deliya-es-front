@@ -4,11 +4,10 @@ export const customMUITheme = createMuiTheme({
   overrides: {
     MuiButton: {
       root: {
-        fontWeight: 'bold',
-        backgroundColor: 'red',
-        margin: '10px',
+        backgroundColor: '#ffffff',
+        margin: '3px',
         '&:hover': {
-          backgroundColor: 'green'
+          backgroundColor: '#fce6f8'
         }
       }
     }

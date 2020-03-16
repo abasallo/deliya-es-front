@@ -7,14 +7,12 @@ import logo from '../../images/logo.png'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 
-import Box from '@material-ui/core/Box'
-
-import { AppBar, Logo, HeaderLoginButtons, Container } from './Dashboard.styled.components'
+import { AppBar, Logo, HeaderLoginButtons, Container, CopyrightBox } from './CarouselDashboard.styled.components'
 
 import Copyright from '../../components/Copyright/Copyright'
 import Carousel from '../../components/Carousel/Carousel'
 
-const Dashboard = props => {
+const CarouselDashboard = props => {
   return (
     <React.Fragment>
       <AppBar position="static">
@@ -29,17 +27,17 @@ const Dashboard = props => {
       <Container>
         <Carousel />
       </Container>
-      <Box mt={8}>
+      <CopyrightBox mt={8}>
         <Copyright />
-      </Box>
+      </CopyrightBox>
     </React.Fragment>
   )
 }
 
-Dashboard.propTypes = {
+CarouselDashboard.propTypes = {
   appState: PropTypes.object,
   setAppState: PropTypes.func,
   eventState: PropTypes.object
 }
 
-export default Dashboard
+export default CarouselDashboard
