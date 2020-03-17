@@ -1,12 +1,12 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
-  heroku: circleci/heroku@1.0.1
 jobs:
   install-and-test:
     docker:
       - image: circleci/node:latest-browsers
     steps:
+      - checkout
       - node/with-cache:
           steps:
             - run: npm install
@@ -21,12 +21,6 @@ jobs:
                 path: test-report.html
 
 workflows:
-  install-test-and-deploy:
+  install-and-test:
     jobs:
       - install-and-test
-      - heroku/deploy-via-git:
-          requires:
-            - install-and-test
-          filters:
-            branches:
-              only: master
