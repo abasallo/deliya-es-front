@@ -1,6 +1,6 @@
-**/.idea/
-**/node_modules/
-**/build/
-**/coverage/
+.idea/
+build/
+node_modules/
+coverage/
 
-**/test-report.html
+test-report.html
