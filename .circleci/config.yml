@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   node: circleci/node@1.1.6
+  heroku: circleci/heroku@1.0.1
 jobs:
   install-and-test-back:
     docker:
@@ -45,7 +46,14 @@ jobs:
                 path: test-report.html
 
 workflows:
-  install-and-test:
+  install-test-and-deploy:
     jobs:
       - install-and-test-back
       - install-and-test-front
+      - heroku/deploy-via-git:
+          requires:
+            - install-and-test-back
+            - install-and-test-front
+          filters:
+            branches:
+              only: master
