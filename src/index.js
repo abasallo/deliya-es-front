@@ -12,8 +12,10 @@ import * as serviceWorker from './serviceWorker'
 
 import App from './App'
 
-const GRAPHQL_URL = 'http://localhost:4000/graphql'
-export const client = new ApolloClient({ link: createHttpLink({ uri: GRAPHQL_URL }), cache: new InMemoryCache() })
+export const client = new ApolloClient({
+  link: createHttpLink({ uri: process.env.REACT_APP_GRAPHQL_URL }),
+  cache: new InMemoryCache()
+})
 
 ReactDOM.render(
   <ApolloProvider client={client}>
