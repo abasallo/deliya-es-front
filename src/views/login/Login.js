@@ -21,10 +21,10 @@ import Copyright from '../../components/Copyright/Copyright'
 import { login } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'
 
-const Login = props => {
+const Login = (props) => {
   const [state, setState] = useState({ email: props.appState.email, password: '', errors: { email: false, password: false } })
 
-  const onSubmit = async event => {
+  const onSubmit = async (event) => {
     event.preventDefault()
     const token = await login(state.email, state.password)
     if (state.password && !token) setState({ ...state, errors: { ...state.errors, password: true } })
@@ -56,7 +56,7 @@ const Login = props => {
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
+          onChange={(event) => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
           error={state.errors.email}
           helperText={state.errors.email ? 'Correo electrónico no válido' : ''}
         />
@@ -71,7 +71,7 @@ const Login = props => {
           id="password"
           autoComplete="current-password"
           value={state.password}
-          onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+          onChange={(event) => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
           error={state.errors.password}
           helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
         />

@@ -12,7 +12,7 @@ import { AppBar, Logo, HeaderLoginButtons, Container, CopyrightBox } from './Car
 import Copyright from '../../components/Copyright/Copyright'
 import Carousel from '../../components/Carousel/Carousel'
 
-const CarouselDashboard = props => {
+const CarouselDashboard = (props) => {
   return (
     <React.Fragment>
       <AppBar position="static">

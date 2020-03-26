@@ -18,10 +18,10 @@ import Copyright from '../../components/Copyright/Copyright'
 
 import { requestPasswordRecoveryUrlOverEmail } from '../../services/graphql/User'
 
-const PasswordRecovery = props => {
+const PasswordRecovery = (props) => {
   const [state, setState] = useState({ email: '', modal: { open: false } })
 
-  const onSubmit = async event => {
+  const onSubmit = async (event) => {
     event.preventDefault()
     if (await requestPasswordRecoveryUrlOverEmail(state.email)) setState({ ...state, modal: { open: true } })
   }
@@ -48,7 +48,7 @@ const PasswordRecovery = props => {
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={event => setState({ email: event.target.value, modal: { open: false } })}
+          onChange={(event) => setState({ email: event.target.value, modal: { open: false } })}
         />
         <Button type="submit" fullWidth variant="contained" color="primary">
           Enviar correo de recuperación

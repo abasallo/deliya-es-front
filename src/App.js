@@ -15,7 +15,7 @@ import PasswordChange from './views/passwordChange/PasswordChange'
 
 const App = () => {
   const [state, setState] = useState({ email: '', token: '' })
-  const setAppState = state => setState(state)
+  const setAppState = (state) => setState(state)
 
   return (
     <MuiThemeProvider theme={customMUITheme}>

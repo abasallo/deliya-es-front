@@ -18,7 +18,7 @@ import Copyright from '../../components/Copyright/Copyright'
 
 import { changePasswordWithToken } from '../../services/graphql/User'
 
-const PasswordChange = props => {
+const PasswordChange = (props) => {
   const [state, setState] = useState({
     password: '',
     passwordRepeated: '',
@@ -26,7 +26,7 @@ const PasswordChange = props => {
     modal: { open: false, text: '' }
   })
 
-  const onSubmit = async event => {
+  const onSubmit = async (event) => {
     event.preventDefault()
     if (state.password && state.password === state.passwordRepeated) {
       const isPasswordChanged = await changePasswordWithToken(state.password, props.match.params.token)
@@ -58,7 +58,7 @@ const PasswordChange = props => {
             id="password"
             autoComplete="new-password"
             value={state.password}
-            onChange={event => setState({ ...state, password: event.target.value, passwordMismatch: false })}
+            onChange={(event) => setState({ ...state, password: event.target.value, passwordMismatch: false })}
             error={!state.password}
             helperText={!state.password ? 'al menos un caracter' : ''}
           />
@@ -73,7 +73,7 @@ const PasswordChange = props => {
             id="password-repeated"
             autoComplete="new-password"
             value={state.passwordRepeated}
-            onChange={event => setState({ ...state, passwordRepeated: event.target.value, passwordMismatch: false })}
+            onChange={(event) => setState({ ...state, passwordRepeated: event.target.value, passwordMismatch: false })}
             error={state.passwordMismatch}
             helperText={state.passwordMismatch ? 'no coinciden' : ''}
           />

@@ -11,7 +11,7 @@ export const login = async (email, password) => {
   }
 }
 
-export const requestPasswordRecoveryUrlOverEmail = async email => {
+export const requestPasswordRecoveryUrlOverEmail = async (email) => {
   try {
     const { data } = await client.query({ query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, variables: { email: email } })
     return data.requestPasswordRecoveryUrlOverEmail
@@ -20,7 +20,7 @@ export const requestPasswordRecoveryUrlOverEmail = async email => {
   }
 }
 
-export const addUser = async user => {
+export const addUser = async (user) => {
   try {
     const { data } = await client.mutate({
       mutation: ADD_USER,

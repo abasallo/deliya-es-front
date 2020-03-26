@@ -22,7 +22,7 @@ import Copyright from '../../components/Copyright/Copyright'
 import { addUser } from '../../services/graphql/User'
 import { isEmailValid } from '../../modules'
 
-const Signup = props => {
+const Signup = (props) => {
   const [state, setState] = useState({
     names: '',
     surnames: '',
@@ -38,7 +38,7 @@ const Signup = props => {
     }
   })
 
-  const onSubmit = async event => {
+  const onSubmit = async (event) => {
     event.preventDefault()
     setState({
       ...state,
@@ -87,7 +87,7 @@ const Signup = props => {
               label="Nombre/s"
               autoFocus
               defaultValue={state.names}
-              onChange={event => setState({ ...state, names: event.target.value, errors: { ...state.errors, names: false } })}
+              onChange={(event) => setState({ ...state, names: event.target.value, errors: { ...state.errors, names: false } })}
               error={state.errors.names}
               helperText={state.errors.names ? '¿cómo te llamas?' : ''}
             />
@@ -102,7 +102,7 @@ const Signup = props => {
               name="surnames"
               label="Apellido/s"
               defaultValue={state.surnames}
-              onChange={event => setState({ ...state, surnames: event.target.value, errors: { ...state.errors, surnames: false } })}
+              onChange={(event) => setState({ ...state, surnames: event.target.value, errors: { ...state.errors, surnames: false } })}
               error={state.errors.surnames}
               helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
             />
@@ -117,7 +117,7 @@ const Signup = props => {
               name="email"
               label="Correo electrónico"
               defaultValue={state.email}
-              onChange={event => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
+              onChange={(event) => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
               error={state.errors.email}
               helperText={state.errors.email ? 'no válido' : ''}
             />
@@ -133,7 +133,7 @@ const Signup = props => {
               label="Contraseña"
               type="password"
               defaultValue={state.password}
-              onChange={event => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+              onChange={(event) => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
               error={!state.password}
               helperText={!state.password ? 'al menos un caracter' : ''}
             />
@@ -149,7 +149,7 @@ const Signup = props => {
               label="Contraseña (otra vez)"
               type="password"
               defaultValue={state.passwordRepeated}
-              onChange={event =>
+              onChange={(event) =>
                 setState({ ...state, passwordRepeated: event.target.value, errors: { ...state.errors, passwordRepeated: false } })
               }
               error={state.errors.password}
@@ -159,7 +159,7 @@ const Signup = props => {
           <Grid item xs={12}>
             <FormControlLabel
               control={
-                <Switch checked={state.contactAllowed} onChange={event => setState({ ...state, contactAllowed: event.target.checked })} />
+                <Switch checked={state.contactAllowed} onChange={(event) => setState({ ...state, contactAllowed: event.target.checked })} />
               }
               label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
             />
