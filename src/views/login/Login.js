@@ -19,7 +19,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright/Copyright'
 
 import { login } from '../../services/graphql/User'
-import { isEmailValid } from '../../modules'
+import { isEmailValid } from '../../modules/email'
 
 const Login = (props) => {
   const [state, setState] = useState({ email: props.appState.email, password: '', errors: { email: false, password: false } })

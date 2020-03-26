@@ -1,24 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import { ApolloClient } from 'apollo-client'
-import { createHttpLink } from 'apollo-link-http'
-import { InMemoryCache } from 'apollo-cache-inmemory'
 import { ApolloProvider } from 'react-apollo'
 
 import './index.css'
 
-import * as serviceWorker from './serviceWorker'
+import { apolloClient } from 'src/services/graphql/apolloClient'
 
 import App from './App'
 
-export const client = new ApolloClient({
-  link: createHttpLink({ uri: process.env.REACT_APP_GRAPHQL_URL }),
-  cache: new InMemoryCache()
-})
+import * as serviceWorker from './serviceWorker'
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
+  <ApolloProvider client={apolloClient}>
     <App />,
   </ApolloProvider>,
   document.getElementById('root')
