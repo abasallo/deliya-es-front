@@ -2,6 +2,9 @@ import React, { Suspense, useState } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
+import { ApolloProvider } from 'react-apollo'
+import { apolloClient } from './services/graphql/apolloClient'
+
 import { MuiThemeProvider, StylesProvider } from '@material-ui/core/styles'
 import { customMUITheme } from './customMUITheme'
 
@@ -18,33 +21,35 @@ const App = () => {
   const setAppState = (state) => setState(state)
 
   return (
-    <MuiThemeProvider theme={customMUITheme}>
-      <StylesProvider injectFirst>
-        <CssBaseline />
-        <Router>
-          <Suspense fallback={<div>Cargando...</div>}>
-            <Switch>
-              <Route path="/password-change/:token">
-                <PasswordChange />
-              </Route>
-              <Route path="/password-recovery">
-                <PasswordRecovery />
-              </Route>
-              <Route path="/signup">
-                <Signup appState={state} />
-              </Route>
-              <Route path="/">
-                {state.email && state.token ? (
-                  <CarouselDashboard appState={state} setAppState={setAppState} />
-                ) : (
-                  <Login appState={state} setAppState={setAppState} />
-                )}
-              </Route>
-            </Switch>
-          </Suspense>
-        </Router>
-      </StylesProvider>
-    </MuiThemeProvider>
+    <ApolloProvider client={apolloClient}>
+      <MuiThemeProvider theme={customMUITheme}>
+        <StylesProvider injectFirst>
+          <CssBaseline />
+          <Router>
+            <Suspense fallback={<div>Cargando...</div>}>
+              <Switch>
+                <Route path="/password-change/:token">
+                  <PasswordChange />
+                </Route>
+                <Route path="/password-recovery">
+                  <PasswordRecovery />
+                </Route>
+                <Route path="/signup">
+                  <Signup appState={state} />
+                </Route>
+                <Route path="/">
+                  {state.email && state.token ? (
+                    <CarouselDashboard appState={state} setAppState={setAppState} />
+                  ) : (
+                    <Login appState={state} setAppState={setAppState} />
+                  )}
+                </Route>
+              </Switch>
+            </Suspense>
+          </Router>
+        </StylesProvider>
+      </MuiThemeProvider>
+    </ApolloProvider>
   )
 }
 

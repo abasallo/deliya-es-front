@@ -1,6 +1,6 @@
 import { apolloClient } from './apolloClient'
 
-import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './User.queries'
+import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './UserQueries'
 
 export const login = async (email, password) => {
   try {
