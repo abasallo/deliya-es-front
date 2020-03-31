@@ -42,7 +42,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-standard": "^4.0.1",
-    "jest-html-reporter": "^2.8.2",
     "prettier": "^2.0.2",
     "prop-types": "^15.7.2"
   },
@@ -70,7 +69,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint --fix .",
     "test": "react-scripts test",
-    "test-reports": "npm test -- --watchAll=false --collectCoverage=true --testResultsProcessor=./node_modules/jest-html-reporter",
     "build": "react-scripts build",
     "start": "react-scripts start"
   }

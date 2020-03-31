@@ -4,4 +4,4 @@ node_modules/
 coverage/
 
 .env
-test-report.html
+junit.xml
