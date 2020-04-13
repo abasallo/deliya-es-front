@@ -67,6 +67,8 @@ const PasswordRecovery = (props) => {
   )
 }
 
+// TODO - Modal style is awful, fix
+
 PasswordRecovery.propTypes = {
   history: PropTypes.object
 }
