@@ -9,8 +9,10 @@ import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
+import Snackbar from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert'
 
-import { AvatarContainer, Button, Modal } from './PasswordChange.styled.components'
+import { AvatarContainer, Button } from './PasswordChange.styled.components'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
@@ -86,9 +88,11 @@ const PasswordChange = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Modal open={state.modal.open} onClose={() => props.history.push('/')}>
-        <div>{state.modal.text}</div>
-      </Modal>
+      <Snackbar open={state.modal.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
+        <Alert onClose={() => props.history.push('/')} severity="success">
+          {state.modal.text}
+        </Alert>
+      </Snackbar>
     </Container>
   )
 }
