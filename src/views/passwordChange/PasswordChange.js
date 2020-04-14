@@ -18,7 +18,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { changePasswordWithToken } from '../../services/graphql/User'
+import { changePasswordWithToken } from '../../services/User'
 
 const PasswordChange = (props) => {
   const [state, setState] = useState({

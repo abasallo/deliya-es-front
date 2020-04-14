@@ -4,6 +4,8 @@ import { withRouter } from 'react-router'
 
 import PropTypes from 'prop-types'
 
+import update from 'immutability-helper'
+
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
@@ -19,38 +21,52 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { addUser } from '../../services/graphql/User'
+import { addUser, doesUserExists } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
 
+const initialState = {
+  names: '',
+  surnames: '',
+  email: '',
+  password: '',
+  passwordRepeated: '',
+  contactAllowed: false,
+  errors: {
+    emailAlreadyUsed: false,
+    names: false,
+    surnames: false,
+    email: false,
+    password: false
+  }
+}
+
 const Signup = (props) => {
-  const [state, setState] = useState({
-    names: '',
-    surnames: '',
-    email: '',
-    password: '',
-    passwordRepeated: '',
-    contactAllowed: false,
-    errors: {
-      names: false,
-      surnames: false,
-      email: false,
-      password: false
+  const [state, setState] = useState(initialState)
+
+  const checkEmailAlreadyUsed = async (state) => {
+    const emailAlreadyUsed = await doesUserExists(state.email)
+    if (state.email && emailAlreadyUsed) {
+      return update(state, { errors: { emailAlreadyUsed: { $set: true } } })
     }
-  })
+    return state
+  }
+
+  const isStateKO = (state) =>
+    state.errors.emailAlreadyUsed || state.errors.names || state.errors.surnames || state.errors.email || state.errors.password
 
   const onSubmit = async (event) => {
     event.preventDefault()
-    setState({
-      ...state,
+    let newState = await checkEmailAlreadyUsed(state)
+    newState = update(newState, {
       errors: {
-        names: !state.names,
-        surnames: !state.surnames,
-        email: !state.email || !isEmailValid(state.email),
-        password: !state.password || state.password !== state.passwordRepeated
+        names: { $set: !state.names },
+        surnames: { $set: !state.surnames },
+        email: { $set: !state.email || !isEmailValid(state.email) },
+        password: { $set: !state.password || state.password !== state.passwordRepeated }
       }
     })
 
-    if (!state.errors.names && !state.errors.surnames && !state.errors.email && !state.errors.password) {
+    if (!isStateKO(newState)) {
       const user = await addUser({
         names: state.names,
         surnames: state.surnames,
@@ -58,10 +74,10 @@ const Signup = (props) => {
         password: state.password,
         contactAllowed: state.contactAllowed
       })
-      if (user) {
-        props.history.push('/')
-      }
+      if (user) props.history.push('/')
     }
+
+    setState(newState)
   }
 
   return (
@@ -87,7 +103,7 @@ const Signup = (props) => {
               label="Nombre/s"
               autoFocus
               defaultValue={state.names}
-              onChange={(event) => setState({ ...state, names: event.target.value, errors: { ...state.errors, names: false } })}
+              onChange={(event) => setState(update(state, { names: { $set: event.target.value }, errors: { names: { $set: false } } }))}
               error={state.errors.names}
               helperText={state.errors.names ? '¿cómo te llamas?' : ''}
             />
@@ -102,7 +118,9 @@ const Signup = (props) => {
               name="surnames"
               label="Apellido/s"
               defaultValue={state.surnames}
-              onChange={(event) => setState({ ...state, surnames: event.target.value, errors: { ...state.errors, surnames: false } })}
+              onChange={(event) =>
+                setState(update(state, { surnames: { $set: event.target.value }, errors: { surnames: { $set: false } } }))
+              }
               error={state.errors.surnames}
               helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
             />
@@ -117,9 +135,16 @@ const Signup = (props) => {
               name="email"
               label="Correo electrónico"
               defaultValue={state.email}
-              onChange={(event) => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
-              error={state.errors.email}
-              helperText={state.errors.email ? 'no válido' : ''}
+              onChange={(event) =>
+                setState(
+                  update(state, {
+                    email: { $set: event.target.value },
+                    errors: { emailAlreadyUsed: { $set: false }, email: { $set: false } }
+                  })
+                )
+              }
+              error={state.errors.emailAlreadyUsed || state.errors.email}
+              helperText={state.errors.emailAlreadyUsed || state.errors.email ? 'no válido, o ya existente' : ''}
             />
           </Grid>
           <Grid item xs={12}>
@@ -133,7 +158,9 @@ const Signup = (props) => {
               label="Contraseña"
               type="password"
               defaultValue={state.password}
-              onChange={(event) => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+              onChange={(event) =>
+                setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))
+              }
               error={!state.password}
               helperText={!state.password ? 'al menos un caracter' : ''}
             />
@@ -150,7 +177,7 @@ const Signup = (props) => {
               type="password"
               defaultValue={state.passwordRepeated}
               onChange={(event) =>
-                setState({ ...state, passwordRepeated: event.target.value, errors: { ...state.errors, passwordRepeated: false } })
+                setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { passwordRepeated: { $set: false } } }))
               }
               error={state.errors.password}
               helperText={state.errors.password ? 'no coinciden' : ''}

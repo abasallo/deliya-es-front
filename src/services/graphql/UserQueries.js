@@ -1,5 +1,11 @@
 import gql from 'graphql-tag'
 
+export const DOES_USER_EXISTS = gql`
+  query($email: String) {
+    doesUserExists(email: $email)
+  }
+`
+
 export const LOGIN = gql`
   query($email: String, $password: String) {
     login(email: $email, password: $password)

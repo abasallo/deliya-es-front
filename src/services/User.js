@@ -1,6 +1,17 @@
-import { apolloClient } from './apolloClient'
+import { apolloClient } from './graphql/apolloClient'
 
-import { LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './UserQueries'
+import {
+  DOES_USER_EXISTS,
+  LOGIN,
+  REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+  ADD_USER,
+  CHANGE_PASSWORD_WITH_TOKEN
+} from './graphql/UserQueries'
+
+export const doesUserExists = async (email) => {
+  const { data } = await apolloClient.query({ query: DOES_USER_EXISTS, variables: { email: email } })
+  return data.doesUserExists
+}
 
 export const login = async (email, password) => {
   try {

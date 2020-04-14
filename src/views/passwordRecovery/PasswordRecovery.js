@@ -4,6 +4,8 @@ import { withRouter } from 'react-router'
 
 import PropTypes from 'prop-types'
 
+import update from 'immutability-helper'
+
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
@@ -18,16 +20,34 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { requestPasswordRecoveryUrlOverEmail } from '../../services/graphql/User'
+import { doesUserExists, requestPasswordRecoveryUrlOverEmail } from '../../services/User'
+
+import { isEmailValid } from '../../modules/email'
+
+const initialState = { email: '', modal: { open: false, text: '' }, errors: { emailExistence: false }, disabled: false }
 
 const PasswordRecovery = (props) => {
-  const [state, setState] = useState({ email: '', modal: { open: false, text: '' } })
+  const [state, setState] = useState(initialState)
+
+  const checkEmailExistenceAndValidity = async (state) => {
+    const userExistence = await doesUserExists(state.email)
+    if (!state.email || !userExistence || !isEmailValid(state.email)) {
+      return update(state, { errors: { emailExistence: { $set: true } } })
+    }
+    return state
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault()
-    if (await requestPasswordRecoveryUrlOverEmail(state.email)) {
-      setState({ ...state, modal: { open: true, text: 'Correo de recuperación de contraseña enviado.' } })
+    let newState = await checkEmailExistenceAndValidity(state)
+    if (!newState.errors.emailExistence) {
+      newState = update(newState, { disabled: { $set: true } })
+      setState(newState)
+      if (requestPasswordRecoveryUrlOverEmail(state.email)) {
+        newState = update(newState, { modal: { open: { $set: true }, text: { $set: 'Correo de recuperación de contraseña enviado.' } } })
+      }
     }
+    setState(newState)
   }
 
   return (
@@ -52,9 +72,20 @@ const PasswordRecovery = (props) => {
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={(event) => setState({ email: event.target.value, modal: { open: false } })}
+          onChange={(event) =>
+            setState(
+              update(state, {
+                email: { $set: event.target.value },
+                modal: { open: { $set: false } },
+                errors: { emailExistence: { $set: false } }
+              })
+            )
+          }
+          error={state.errors.emailExistence}
+          helperText={state.errors.emailExistence ? 'Correo electrónico no válido, o inexistente' : ''}
+          disabled={state.disabled ? 'disabled' : ''}
         />
-        <Button type="submit" fullWidth variant="contained" color="primary">
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled ? 'disabled' : ''}>
           Enviar correo de recuperación
         </Button>
       </form>

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
 
+import update from 'immutability-helper'
+
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
@@ -18,20 +20,43 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { login } from '../../services/graphql/User'
+import { doesUserExists, login } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
 
 const Login = (props) => {
-  const [state, setState] = useState({ email: props.appState.email, password: '', errors: { email: false, password: false } })
+  const initialState = { email: props.appState.email, password: '', errors: { emailExistence: false, emailFormat: false, password: false } }
+  const [state, setState] = useState(initialState)
+
+  const checkEmailExistence = async (state) => {
+    const userExistence = await doesUserExists(state.email)
+    if (!state.email || !userExistence) {
+      return update(state, { errors: { emailExistence: { $set: true } } })
+    }
+    return state
+  }
+
+  const checkEmailFormatValidity = (state) => {
+    if (!state.email || !isEmailValid(state.email)) {
+      return update(state, { errors: { emailFormat: { $set: true } } })
+    }
+    return state
+  }
+
+  const checkPasswordValidity = (token, state) => {
+    if (!state.password || !token) {
+      return update(state, { errors: { password: { $set: true } } })
+    }
+    return state
+  }
+
+  const isStateKO = (state) => state.errors.emailExistence || state.errors.emailFormat || state.errors.password
 
   const onSubmit = async (event) => {
     event.preventDefault()
     const token = await login(state.email, state.password)
-    if (state.password && !token) setState({ ...state, errors: { ...state.errors, password: true } })
-    if (state.email && !isEmailValid(state.email)) setState({ ...state, errors: { ...state.errors, email: true } })
-    if (!state.errors.email && !state.errors.password) {
-      props.setAppState({ email: state.email, token: token })
-    }
+    const newState = await checkPasswordValidity(token, await checkEmailExistence(checkEmailFormatValidity(state)))
+    if (!isStateKO(newState)) props.setAppState({ email: state.email, token: token })
+    setState(newState)
   }
 
   return (
@@ -51,27 +76,34 @@ const Login = (props) => {
           required
           fullWidth
           id="email"
-          label="Correo electrónico"
           name="email"
+          label="Correo electrónico"
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={(event) => setState({ ...state, email: event.target.value, errors: { ...state.errors, email: false } })}
-          error={state.errors.email}
-          helperText={state.errors.email ? 'Correo electrónico no válido' : ''}
+          onChange={(event) =>
+            setState(
+              update(state, {
+                email: { $set: event.target.value },
+                errors: { emailFormat: { $set: false }, emailExistence: { $set: false } }
+              })
+            )
+          }
+          error={state.errors.emailExistence || state.errors.emailFormat}
+          helperText={state.errors.emailExistence || state.errors.emailFormat ? 'Correo electrónico no válido, o inexistente' : ''}
         />
         <TextField
           variant="outlined"
           margin="normal"
           required
           fullWidth
+          id="password"
           name="password"
           label="Contraseña"
           type="password"
-          id="password"
           autoComplete="current-password"
           value={state.password}
-          onChange={(event) => setState({ ...state, password: event.target.value, errors: { ...state.errors, password: false } })}
+          onChange={(event) => setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))}
           error={state.errors.password}
           helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
         />

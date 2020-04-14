@@ -1,0 +1,79 @@
+import { apolloClient } from './graphql/apolloClient'
+
+import { doesUserExists, login, requestPasswordRecoveryUrlOverEmail, addUser, changePasswordWithToken } from './User'
+import {
+  DOES_USER_EXISTS,
+  ADD_USER,
+  LOGIN,
+  REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+  CHANGE_PASSWORD_WITH_TOKEN
+} from './graphql/UserQueries'
+
+jest.mock('./graphql/apolloClient', () => ({ apolloClient: { query: jest.fn(), mutate: jest.fn() } }))
+
+beforeAll(() => {
+  apolloClient.query.mockImplementation((_) => ({
+    data: {
+      doesUserExists: { query: _.query, variables: _.variables },
+      login: { query: _.query, variables: _.variables },
+      requestPasswordRecoveryUrlOverEmail: { query: _.query, variables: _.variables }
+    }
+  }))
+  apolloClient.mutate.mockImplementation((_) => ({
+    data: {
+      addUser: { mutation: _.mutation, variables: _.variables },
+      changePasswordWithToken: { mutation: _.mutation, variables: _.variables }
+    }
+  }))
+})
+
+test('Check user existence successfully', () =>
+  expect(doesUserExists('email')).resolves.toEqual({ query: DOES_USER_EXISTS, variables: { email: 'email' } }))
+
+test('Login successfully', () =>
+  expect(login('email', 'password')).resolves.toEqual({ query: LOGIN, variables: { email: 'email', password: 'password' } }))
+
+test('Password recovery requested successfully', () =>
+  expect(requestPasswordRecoveryUrlOverEmail('email')).resolves.toEqual({
+    query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+    variables: { email: 'email' }
+  }))
+
+test('User added successfully', () => {
+  expect(addUser({ names: 'names', surnames: 'surnames', email: 'email', password: 'password', contactAllowed: true })).resolves.toEqual({
+    mutation: ADD_USER,
+    variables: { names: 'names', surnames: 'surnames', email: 'email', password: 'password', isEmailContactAllowed: true }
+  })
+})
+
+test('Password changed successfully', () => {
+  expect(changePasswordWithToken('password', 'token')).resolves.toEqual({
+    mutation: CHANGE_PASSWORD_WITH_TOKEN,
+    variables: { password: 'password', token: 'token' }
+  })
+})
+
+const changeQueryMockToErrorThrowing = () =>
+  apolloClient.query.mockImplementation(() => {
+    throw new Error()
+  })
+
+test('Login throws exception', () => {
+  changeQueryMockToErrorThrowing()
+  expect(login('', '')).resolves.toEqual('')
+})
+
+test('Password throws exception', () => {
+  changeQueryMockToErrorThrowing()
+  expect(requestPasswordRecoveryUrlOverEmail('')).resolves.toEqual('')
+})
+
+test('User throws exception', () => {
+  changeQueryMockToErrorThrowing()
+  expect(addUser({})).resolves.toEqual(undefined)
+})
+
+test('Password throws exception', () => {
+  changeQueryMockToErrorThrowing()
+  expect(changePasswordWithToken('', '')).resolves.toEqual(false)
+})
