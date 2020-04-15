@@ -4,6 +4,8 @@ import { withRouter } from 'react-router'
 
 import PropTypes from 'prop-types'
 
+import update from 'immutability-helper'
+
 import Typography from '@material-ui/core/Typography'
 import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
@@ -20,21 +22,24 @@ import Copyright from '../../components/Copyright/Copyright'
 
 import { changePasswordWithToken } from '../../services/User'
 
+const initialState = { password: '', passwordRepeated: '', disabled: false, errors: { password: { missmatch: false, format: false } }, snackbar: { open: false, text: '' }}
+
 const PasswordChange = (props) => {
-  const [state, setState] = useState({
-    password: '',
-    passwordRepeated: '',
-    passwordMismatch: false,
-    snackbar: { open: false, text: '' }
-  })
+  const [state, setState] = useState(initialState)
+
+  const disableForm = () => update(state, { disabled: { $set: true }})
+
+  const checkPasswordValidity = async (state) => {
+    if (state.password === state.passwordRepeated) {
+      if (await changePasswordWithToken(state.password, props.match.params.token)) return update(disableForm(state), { snackbar: { open: { $set: true }, text: { $set: 'La contraseña ha sido cambiada con éxito.' }}})
+      else return update(disableForm(state), { snackbar: { open: { $set: true }, text: { $set: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } } })
+    }
+    return update(state, { errors: { password: { missmatch: { $set: true }}}})
+  }
 
   const onSubmit = async (event) => {
     event.preventDefault()
-    if (state.password && state.password === state.passwordRepeated) {
-      const isPasswordChanged = await changePasswordWithToken(state.password, props.match.params.token)
-      if (isPasswordChanged) setState({ ...state, snackbar: { open: true, text: 'La contraseña ha sido cambiada con éxito.' } })
-      else setState({ ...state, snackbar: { open: true, text: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } })
-    } else setState({ ...state, passwordMismatch: true })
+    setState(await checkPasswordValidity(state))
   }
 
   return (
@@ -60,9 +65,10 @@ const PasswordChange = (props) => {
             id="password"
             autoComplete="new-password"
             value={state.password}
-            onChange={(event) => setState({ ...state, password: event.target.value, passwordMismatch: false })}
-            error={!state.password}
-            helperText={!state.password ? 'al menos un caracter' : ''}
+            onChange={(event) => setState(update(state, { password: { $set: event.target.value }, errors: { password: { format: { $set: (event.target.value.length === 0) }}}}))}
+            error={state.errors.password.format}
+            helperText={state.errors.password.format ? 'al menos un caracter' : ''}
+            disabled={state.disabled}
           />
           <TextField
             variant="outlined"
@@ -75,12 +81,12 @@ const PasswordChange = (props) => {
             id="password-repeated"
             autoComplete="new-password"
             value={state.passwordRepeated}
-            onChange={(event) => setState({ ...state, passwordRepeated: event.target.value, passwordMismatch: false })}
-            error={state.passwordMismatch}
-            helperText={state.passwordMismatch ? 'no coinciden' : ''}
+            onChange={event => setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { missmatch: { $set: false}}}}))}
+            error={state.errors.password.missmatch}
+            helperText={state.errors.password.missmatch ? 'no coinciden' : ''}
+            disabled={state.disabled}
           />
-
-          <Button type="submit" fullWidth variant="contained" color="primary">
+          <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
             Enviar nueva contraseña
           </Button>
         </form>
@@ -97,9 +103,6 @@ const PasswordChange = (props) => {
   )
 }
 
-PasswordChange.propTypes = {
-  match: PropTypes.object,
-  history: PropTypes.object
-}
+PasswordChange.propTypes = { match: PropTypes.object, history: PropTypes.object }
 
 export default withRouter(PasswordChange)

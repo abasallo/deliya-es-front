@@ -24,7 +24,7 @@ import { doesUserExists, requestPasswordRecoveryUrlOverEmail } from '../../servi
 
 import { isEmailValid } from '../../modules/email'
 
-const initialState = { email: '', snackbar: { open: false, text: '' }, errors: { emailExistence: false }, disabled: false }
+const initialState = { email: '', disabled: false, errors: { emailExistence: false }, snackbar: { open: false, text: '' } }
 
 const PasswordRecovery = (props) => {
   const [state, setState] = useState(initialState)
@@ -83,9 +83,9 @@ const PasswordRecovery = (props) => {
           }
           error={state.errors.emailExistence}
           helperText={state.errors.emailExistence ? 'Correo electrónico no válido, o inexistente' : ''}
-          disabled={state.disabled ? 'disabled' : ''}
+          disabled={state.disabled}
         />
-        <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled ? 'disabled' : ''}>
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
           Enviar correo de recuperación
         </Button>
       </form>
