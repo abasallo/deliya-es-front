@@ -24,7 +24,7 @@ import { doesUserExists, requestPasswordRecoveryUrlOverEmail } from '../../servi
 
 import { isEmailValid } from '../../modules/email'
 
-const initialState = { email: '', modal: { open: false, text: '' }, errors: { emailExistence: false }, disabled: false }
+const initialState = { email: '', snackbar: { open: false, text: '' }, errors: { emailExistence: false }, disabled: false }
 
 const PasswordRecovery = (props) => {
   const [state, setState] = useState(initialState)
@@ -44,7 +44,7 @@ const PasswordRecovery = (props) => {
       newState = update(newState, { disabled: { $set: true } })
       setState(newState)
       if (requestPasswordRecoveryUrlOverEmail(state.email)) {
-        newState = update(newState, { modal: { open: { $set: true }, text: { $set: 'Correo de recuperación de contraseña enviado.' } } })
+        newState = update(newState, { snackbar: { open: { $set: true }, text: { $set: 'Correo de recuperación de contraseña enviado.' } } })
       }
     }
     setState(newState)
@@ -76,7 +76,7 @@ const PasswordRecovery = (props) => {
             setState(
               update(state, {
                 email: { $set: event.target.value },
-                modal: { open: { $set: false } },
+                snackbar: { open: { $set: false } },
                 errors: { emailExistence: { $set: false } }
               })
             )
@@ -92,9 +92,9 @@ const PasswordRecovery = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar open={state.modal.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
+      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
         <Alert onClose={() => props.history.push('/')} severity="success">
-          {state.modal.text}
+          {state.snackbar.text}
         </Alert>
       </Snackbar>
     </Container>

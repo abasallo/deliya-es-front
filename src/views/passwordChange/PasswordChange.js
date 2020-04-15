@@ -25,15 +25,15 @@ const PasswordChange = (props) => {
     password: '',
     passwordRepeated: '',
     passwordMismatch: false,
-    modal: { open: false, text: '' }
+    snackbar: { open: false, text: '' }
   })
 
   const onSubmit = async (event) => {
     event.preventDefault()
     if (state.password && state.password === state.passwordRepeated) {
       const isPasswordChanged = await changePasswordWithToken(state.password, props.match.params.token)
-      if (isPasswordChanged) setState({ ...state, modal: { open: true, text: 'La contraseña ha sido cambiada con éxito.' } })
-      else setState({ ...state, modal: { open: true, text: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } })
+      if (isPasswordChanged) setState({ ...state, snackbar: { open: true, text: 'La contraseña ha sido cambiada con éxito.' } })
+      else setState({ ...state, snackbar: { open: true, text: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } })
     } else setState({ ...state, passwordMismatch: true })
   }
 
@@ -88,9 +88,9 @@ const PasswordChange = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar open={state.modal.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
+      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
         <Alert onClose={() => props.history.push('/')} severity="success">
-          {state.modal.text}
+          {state.snackbar.text}
         </Alert>
       </Snackbar>
     </Container>
