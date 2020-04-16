@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import { withCookies } from 'react-cookie'
+
 import { withRouter } from 'react-router'
 
 import { Link } from 'react-router-dom'
@@ -14,7 +16,6 @@ import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-import Checkbox from '@material-ui/core/Checkbox'
 
 import { AvatarContainer, Button, FormControlLabel } from './Login.styled.components'
 
@@ -26,10 +27,12 @@ import { doesUserExists, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
 import Snackbar from '@material-ui/core/Snackbar'
 import Alert from '@material-ui/lab/Alert'
+import Switch from '@material-ui/core/Switch'
 
 const initialState = {
   email: '',
   password: '',
+  remember: false,
   disabled: false,
   errors: { emailExistence: false, emailFormat: false, password: false },
   snackbar: { open: false, text: '' }
@@ -81,6 +84,10 @@ const Login = (props) => {
   const onSubmit = async (event) => {
     event.preventDefault()
     const token = await login(state.email, state.password)
+    if (state.remember) {
+      props.cookies.set('email', state.email)
+      props.cookies.set('token', token)
+    }
     const newState = await checkPasswordValidity(token, await checkEmailExistence(checkEmailFormatValidity(state)))
     if (!isStateKO(newState)) props.setAppState({ email: state.email, token: token })
     setState(newState)
@@ -136,7 +143,13 @@ const Login = (props) => {
           helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
           disabled={state.disabled}
         />
-        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" disabled={state.disabled} />
+        <FormControlLabel
+          control={
+            <Switch checked={state.remember} onChange={(event) => setState(update(state, { remember: { $set: event.target.checked } }))} />
+          }
+          label="Recuérdame"
+          disabled={state.disabled}
+        />
         <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
           Entrar
         </Button>
@@ -162,6 +175,7 @@ const Login = (props) => {
 }
 
 Login.propTypes = {
+  cookies: PropTypes.object,
   match: PropTypes.object,
   history: PropTypes.object,
   fromUserActivationEmail: PropTypes.string,
@@ -169,4 +183,4 @@ Login.propTypes = {
   setAppState: PropTypes.func
 }
 
-export default withRouter(Login)
+export default withCookies(withRouter(Login))

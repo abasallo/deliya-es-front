@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { withCookies } from 'react-cookie'
+
 import PropTypes from 'prop-types'
 
 import logo from '../../images/logo.png'
@@ -20,7 +22,15 @@ const CarouselDashboard = (props) => {
           <Logo src={logo} alt="Logo" />
           <HeaderLoginButtons>
             <Button>{props.appState.email}</Button>
-            <Button onClick={() => props.setAppState({ email: '', token: '' })}>Logout</Button>
+            <Button
+              onClick={() => {
+                props.setAppState({ emai: '', token: '' })
+                props.cookies.set('email', '')
+                props.cookies.set('token', '')
+              }}
+            >
+              Logout
+            </Button>
           </HeaderLoginButtons>
         </Toolbar>
       </AppBar>
@@ -40,4 +50,6 @@ CarouselDashboard.propTypes = {
   eventState: PropTypes.object
 }
 
-export default CarouselDashboard
+CarouselDashboard.propTypes = { cookies: PropTypes.object }
+
+export default withCookies(CarouselDashboard)
