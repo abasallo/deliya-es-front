@@ -22,19 +22,32 @@ import Copyright from '../../components/Copyright/Copyright'
 
 import { changePasswordWithToken } from '../../services/User'
 
-const initialState = { password: '', passwordRepeated: '', disabled: false, errors: { password: { missmatch: false, format: false } }, snackbar: { open: false, text: '' }}
+const initialState = {
+  password: '',
+  passwordRepeated: '',
+  disabled: false,
+  errors: { password: { missmatch: false, format: false } },
+  snackbar: { open: false, text: '' }
+}
 
 const PasswordChange = (props) => {
   const [state, setState] = useState(initialState)
 
-  const disableForm = () => update(state, { disabled: { $set: true }})
+  const disableForm = () => update(state, { disabled: { $set: true } })
 
   const checkPasswordValidity = async (state) => {
     if (state.password === state.passwordRepeated) {
-      if (await changePasswordWithToken(state.password, props.match.params.token)) return update(disableForm(state), { snackbar: { open: { $set: true }, text: { $set: 'La contraseña ha sido cambiada con éxito.' }}})
-      else return update(disableForm(state), { snackbar: { open: { $set: true }, text: { $set: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } } })
+      if (await changePasswordWithToken(state.password, props.match.params.token)) {
+        return update(disableForm(state), {
+          snackbar: { open: { $set: true }, text: { $set: 'La contraseña ha sido cambiada con éxito.' } }
+        })
+      } else {
+        return update(disableForm(state), {
+          snackbar: { open: { $set: true }, text: { $set: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } }
+        })
+      }
     }
-    return update(state, { errors: { password: { missmatch: { $set: true }}}})
+    return update(state, { errors: { password: { missmatch: { $set: true } } } })
   }
 
   const onSubmit = async (event) => {
@@ -65,7 +78,14 @@ const PasswordChange = (props) => {
             id="password"
             autoComplete="new-password"
             value={state.password}
-            onChange={(event) => setState(update(state, { password: { $set: event.target.value }, errors: { password: { format: { $set: (event.target.value.length === 0) }}}}))}
+            onChange={(event) =>
+              setState(
+                update(state, {
+                  password: { $set: event.target.value },
+                  errors: { password: { format: { $set: event.target.value.length === 0 } } }
+                })
+              )
+            }
             error={state.errors.password.format}
             helperText={state.errors.password.format ? 'al menos un caracter' : ''}
             disabled={state.disabled}
@@ -81,7 +101,11 @@ const PasswordChange = (props) => {
             id="password-repeated"
             autoComplete="new-password"
             value={state.passwordRepeated}
-            onChange={event => setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { missmatch: { $set: false}}}}))}
+            onChange={(event) =>
+              setState(
+                update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { missmatch: { $set: false } } } })
+              )
+            }
             error={state.errors.password.missmatch}
             helperText={state.errors.password.missmatch ? 'no coinciden' : ''}
             disabled={state.disabled}

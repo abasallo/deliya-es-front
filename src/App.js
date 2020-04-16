@@ -37,6 +37,9 @@ const App = () => {
                 <Route path="/signup">
                   <Signup appState={state} />
                 </Route>
+                <Route path="/user-activation/:token">
+                  <Login fromUserActivationEmail="true" appState={state} setAppState={setAppState} />
+                </Route>
                 <Route path="/">
                   {state.email && state.token ? (
                     <CarouselDashboard appState={state} setAppState={setAppState} />

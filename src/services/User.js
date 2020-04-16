@@ -4,7 +4,9 @@ import {
   DOES_USER_EXISTS,
   LOGIN,
   REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+  REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
   ADD_USER,
+  ACTIVATE_USER,
   CHANGE_PASSWORD_WITH_TOKEN
 } from './graphql/UserQueries'
 
@@ -22,10 +24,19 @@ export const login = async (email, password) => {
   }
 }
 
-export const requestPasswordRecoveryUrlOverEmail = async (email) => {
+export const requestPasswordRecoveryOverEmail = async (email) => {
   try {
     const { data } = await apolloClient.query({ query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, variables: { email: email } })
     return data.requestPasswordRecoveryUrlOverEmail
+  } catch (error) {
+    return ''
+  }
+}
+
+export const requestUserActivationOverEmail = async (email) => {
+  try {
+    const { data } = await apolloClient.query({ query: REQUEST_USER_ACTIVATION_URL_OVER_EMAIL, variables: { email: email } })
+    return data.requestUserActivationOverEmail
   } catch (error) {
     return ''
   }
@@ -46,6 +57,15 @@ export const addUser = async (user) => {
     return data.addUser
   } catch (error) {
     return undefined
+  }
+}
+
+export const activateUser = async (token) => {
+  try {
+    const { data } = await apolloClient.mutate({ mutation: ACTIVATE_USER, variables: { token: token } })
+    return data.activateUser
+  } catch (error) {
+    return false
   }
 }
 

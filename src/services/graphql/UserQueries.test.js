@@ -1,11 +1,19 @@
-import { DOES_USER_EXISTS, LOGIN, REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL, ADD_USER, CHANGE_PASSWORD_WITH_TOKEN } from './UserQueries'
+import {
+  DOES_USER_EXISTS,
+  LOGIN,
+  REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+  REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
+  ADD_USER,
+  CHANGE_PASSWORD_WITH_TOKEN
+} from './UserQueries'
 
 test('Check user existence query must be initialized properly', () => expect(DOES_USER_EXISTS).toMatchSnapshot())
 
 test('Login query must be initialized properly', () => expect(LOGIN).toMatchSnapshot())
 
-test('Password recovery request query must be initialized properly', () =>
-  expect(REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL).toMatchSnapshot())
+test('Password recovery query must be initialized properly', () => expect(REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL).toMatchSnapshot())
+
+test('User activation query must be initialized properly', () => expect(REQUEST_USER_ACTIVATION_URL_OVER_EMAIL).toMatchSnapshot())
 
 test('User add query must be initialized properly', () => expect(ADD_USER).toMatchSnapshot())
 

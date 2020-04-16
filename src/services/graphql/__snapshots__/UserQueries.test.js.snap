@@ -276,7 +276,7 @@ Object {
 }
 `;
 
-exports[`Password recovery request query must be initialized properly 1`] = `
+exports[`Password recovery query must be initialized properly 1`] = `
 Object {
   "definitions": Array [
     Object {
@@ -341,6 +341,76 @@ Object {
   "kind": "Document",
   "loc": Object {
     "end": 86,
+    "start": 0,
+  },
+}
+`;
+
+exports[`User activation query must be initialized properly 1`] = `
+Object {
+  "definitions": Array [
+    Object {
+      "directives": Array [],
+      "kind": "OperationDefinition",
+      "name": undefined,
+      "operation": "query",
+      "selectionSet": Object {
+        "kind": "SelectionSet",
+        "selections": Array [
+          Object {
+            "alias": undefined,
+            "arguments": Array [
+              Object {
+                "kind": "Argument",
+                "name": Object {
+                  "kind": "Name",
+                  "value": "email",
+                },
+                "value": Object {
+                  "kind": "Variable",
+                  "name": Object {
+                    "kind": "Name",
+                    "value": "email",
+                  },
+                },
+              },
+            ],
+            "directives": Array [],
+            "kind": "Field",
+            "name": Object {
+              "kind": "Name",
+              "value": "requestUserActivationUrlOverEmail",
+            },
+            "selectionSet": undefined,
+          },
+        ],
+      },
+      "variableDefinitions": Array [
+        Object {
+          "defaultValue": undefined,
+          "directives": Array [],
+          "kind": "VariableDefinition",
+          "type": Object {
+            "kind": "NamedType",
+            "name": Object {
+              "kind": "Name",
+              "value": "String",
+            },
+          },
+          "variable": Object {
+            "kind": "Variable",
+            "name": Object {
+              "kind": "Name",
+              "value": "email",
+            },
+          },
+        },
+      ],
+    },
+  ],
+  "kind": "Document",
+  "loc": Object {
+    "end": 84,
     "start": 0,
   },
 }

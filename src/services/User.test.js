@@ -1,11 +1,20 @@
 import { apolloClient } from './graphql/apolloClient'
 
-import { doesUserExists, login, requestPasswordRecoveryUrlOverEmail, addUser, changePasswordWithToken } from './User'
+import {
+  doesUserExists,
+  login,
+  requestPasswordRecoveryOverEmail,
+  requestUserActivationOverEmail,
+  addUser,
+  changePasswordWithToken
+} from './User'
+
 import {
   DOES_USER_EXISTS,
   ADD_USER,
   LOGIN,
   REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+  REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
   CHANGE_PASSWORD_WITH_TOKEN
 } from './graphql/UserQueries'
 
@@ -16,7 +25,8 @@ beforeAll(() => {
     data: {
       doesUserExists: { query: _.query, variables: _.variables },
       login: { query: _.query, variables: _.variables },
-      requestPasswordRecoveryUrlOverEmail: { query: _.query, variables: _.variables }
+      requestPasswordRecoveryUrlOverEmail: { query: _.query, variables: _.variables },
+      requestUserActivationOverEmail: { query: _.query, variables: _.variables }
     }
   }))
   apolloClient.mutate.mockImplementation((_) => ({
@@ -34,8 +44,14 @@ test('Login successfully', () =>
   expect(login('email', 'password')).resolves.toEqual({ query: LOGIN, variables: { email: 'email', password: 'password' } }))
 
 test('Password recovery requested successfully', () =>
-  expect(requestPasswordRecoveryUrlOverEmail('email')).resolves.toEqual({
+  expect(requestPasswordRecoveryOverEmail('email')).resolves.toEqual({
     query: REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
+    variables: { email: 'email' }
+  }))
+
+test('User activation requested successfully', () =>
+  expect(requestUserActivationOverEmail('email')).resolves.toEqual({
+    query: REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
     variables: { email: 'email' }
   }))
 
@@ -63,9 +79,14 @@ test('Login throws exception', () => {
   expect(login('', '')).resolves.toEqual('')
 })
 
-test('Password throws exception', () => {
+test('Password recovery throws exception', () => {
   changeQueryMockToErrorThrowing()
-  expect(requestPasswordRecoveryUrlOverEmail('')).resolves.toEqual('')
+  expect(requestPasswordRecoveryOverEmail('')).resolves.toEqual('')
+})
+
+test('User activation throws exception', () => {
+  changeQueryMockToErrorThrowing()
+  expect(requestUserActivationOverEmail('')).resolves.toEqual('')
 })
 
 test('User throws exception', () => {

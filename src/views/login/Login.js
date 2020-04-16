@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 
+import { withRouter } from 'react-router'
+
 import { Link } from 'react-router-dom'
 
 import PropTypes from 'prop-types'
@@ -20,12 +22,37 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { doesUserExists, login } from '../../services/User'
+import { doesUserExists, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
+import Snackbar from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert'
+
+const initialState = {
+  email: '',
+  password: '',
+  disabled: false,
+  errors: { emailExistence: false, emailFormat: false, password: false },
+  snackbar: { open: false, text: '' }
+}
+
+const onActivatingUser = (props, state, setState) => {
+  if (props.fromUserActivationEmail && !state.snackbar.open) {
+    activateUser(props.match.params.token).then(() => {
+      setState(update(state, { disabled: { $set: true }, snackbar: { open: { $set: true }, text: { $set: 'Usuario activado :-)' } } }))
+    })
+  }
+}
+
+const navigateToRoot = (props, setState) => {
+  setState(initialState)
+  props.history.push('/')
+}
 
 const Login = (props) => {
-  const initialState = { email: props.appState.email, password: '', errors: { emailExistence: false, emailFormat: false, password: false } }
+  initialState.email = props.appState.email
   const [state, setState] = useState(initialState)
+
+  onActivatingUser(props, state, setState)
 
   const checkEmailExistence = async (state) => {
     const userExistence = await doesUserExists(state.email)
@@ -91,6 +118,7 @@ const Login = (props) => {
           }
           error={state.errors.emailExistence || state.errors.emailFormat}
           helperText={state.errors.emailExistence || state.errors.emailFormat ? 'Correo electrónico no válido, o inexistente' : ''}
+          disabled={state.disabled}
         />
         <TextField
           variant="outlined"
@@ -106,9 +134,10 @@ const Login = (props) => {
           onChange={(event) => setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))}
           error={state.errors.password}
           helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
+          disabled={state.disabled}
         />
-        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" />
-        <Button type="submit" fullWidth variant="contained" color="primary">
+        <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Recuérdame" disabled={state.disabled} />
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
           Entrar
         </Button>
         <Grid container>
@@ -123,13 +152,21 @@ const Login = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
+      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => navigateToRoot(props, setState)}>
+        <Alert onClose={() => navigateToRoot(props, setState)} severity="success">
+          {state.snackbar.text}
+        </Alert>
+      </Snackbar>
     </Container>
   )
 }
 
 Login.propTypes = {
+  match: PropTypes.object,
+  history: PropTypes.object,
+  fromUserActivationEmail: PropTypes.string,
   appState: PropTypes.object,
   setAppState: PropTypes.func
 }
 
-export default Login
+export default withRouter(Login)

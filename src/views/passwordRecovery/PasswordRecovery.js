@@ -20,7 +20,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { doesUserExists, requestPasswordRecoveryUrlOverEmail } from '../../services/User'
+import { doesUserExists, requestPasswordRecoveryOverEmail } from '../../services/User'
 
 import { isEmailValid } from '../../modules/email'
 
@@ -43,7 +43,7 @@ const PasswordRecovery = (props) => {
     if (!newState.errors.emailExistence) {
       newState = update(newState, { disabled: { $set: true } })
       setState(newState)
-      if (requestPasswordRecoveryUrlOverEmail(state.email)) {
+      if (requestPasswordRecoveryOverEmail(state.email)) {
         newState = update(newState, { snackbar: { open: { $set: true }, text: { $set: 'Correo de recuperación de contraseña enviado.' } } })
       }
     }

@@ -14,14 +14,17 @@ import Box from '@material-ui/core/Box'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Switch from '@material-ui/core/Switch'
-
-import { AvatarContainer, Button, FormControlLabel } from './Signup.styled.component'
+import Snackbar from '@material-ui/core/Snackbar'
+import Alert from '@material-ui/lab/Alert'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
 
-import { addUser, doesUserExists } from '../../services/User'
+import { AvatarContainer, Button, FormControlLabel } from './Signup.styled.component'
+
+import { doesUserExists, requestUserActivationOverEmail, addUser } from '../../services/User'
+
 import { isEmailValid } from '../../modules/email'
 
 const initialState = {
@@ -31,12 +34,17 @@ const initialState = {
   password: '',
   passwordRepeated: '',
   contactAllowed: false,
+  disabled: false,
   errors: {
     emailAlreadyUsed: false,
     names: false,
     surnames: false,
     email: false,
     password: false
+  },
+  snackbar: {
+    open: false,
+    text: ''
   }
 }
 
@@ -67,14 +75,17 @@ const Signup = (props) => {
     })
 
     if (!isStateKO(newState)) {
-      const user = await addUser({
+      addUser({
         names: state.names,
         surnames: state.surnames,
         email: state.email,
         password: state.password,
         contactAllowed: state.contactAllowed
+      }).then((user) => requestUserActivationOverEmail(user.email))
+      newState = update(newState, {
+        disabled: { $set: true },
+        snackbar: { open: { $set: true }, text: { $set: 'Correo de activación enviado.' } }
       })
-      if (user) props.history.push('/')
     }
 
     setState(newState)
@@ -106,6 +117,7 @@ const Signup = (props) => {
               onChange={(event) => setState(update(state, { names: { $set: event.target.value }, errors: { names: { $set: false } } }))}
               error={state.errors.names}
               helperText={state.errors.names ? '¿cómo te llamas?' : ''}
+              disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -123,6 +135,7 @@ const Signup = (props) => {
               }
               error={state.errors.surnames}
               helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
+              disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12}>
@@ -145,6 +158,7 @@ const Signup = (props) => {
               }
               error={state.errors.emailAlreadyUsed || state.errors.email}
               helperText={state.errors.emailAlreadyUsed || state.errors.email ? 'no válido, o ya existente' : ''}
+              disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12}>
@@ -163,6 +177,7 @@ const Signup = (props) => {
               }
               error={!state.password}
               helperText={!state.password ? 'al menos un caracter' : ''}
+              disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12}>
@@ -181,6 +196,7 @@ const Signup = (props) => {
               }
               error={state.errors.password}
               helperText={state.errors.password ? 'no coinciden' : ''}
+              disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12}>
@@ -189,10 +205,11 @@ const Signup = (props) => {
                 <Switch checked={state.contactAllowed} onChange={(event) => setState({ ...state, contactAllowed: event.target.checked })} />
               }
               label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
+              disabled={state.disabled}
             />
           </Grid>
         </Grid>
-        <Button type="submit" fullWidth variant="contained" color="primary">
+        <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
           Enviar alta
         </Button>
         <Grid container justify="center">
@@ -206,6 +223,11 @@ const Signup = (props) => {
       <Box mt={5}>
         <Copyright />
       </Box>
+      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
+        <Alert onClose={() => props.history.push('/')} severity="success">
+          {state.snackbar.text}
+        </Alert>
+      </Snackbar>
     </Container>
   )
 }

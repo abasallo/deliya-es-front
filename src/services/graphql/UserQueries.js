@@ -18,6 +18,12 @@ export const REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL = gql`
   }
 `
 
+export const REQUEST_USER_ACTIVATION_URL_OVER_EMAIL = gql`
+  query($email: String) {
+    requestUserActivationUrlOverEmail(email: $email)
+  }
+`
+
 export const ADD_USER = gql`
   mutation($names: String, $surnames: String, $email: String!, $password: String!, $isEmailContactAllowed: Boolean!) {
     addUser(
@@ -30,6 +36,12 @@ export const ADD_USER = gql`
       password
       isEmailContactAllowed
     }
+  }
+`
+
+export const ACTIVATE_USER = gql`
+  mutation($token: String) {
+    activateUser(token: $token)
   }
 `
 
