@@ -33,7 +33,7 @@ const initialState = {
   email: '',
   password: '',
   passwordRepeated: '',
-  contactAllowed: false,
+  contactAllowed: true,
   disabled: false,
   errors: {
     emailAlreadyUsed: false,
