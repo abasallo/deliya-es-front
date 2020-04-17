@@ -84,10 +84,11 @@ const Login = (props) => {
       props.cookies.set('token', token)
     }
     const newState = await checkPasswordValidity(token, await checkEmailExistence(checkEmailFormatValidity(state)))
-    if (!isStateKO(newState)) {
+    if (isStateKO(newState)) {
+      setState(newState)
+    } else {
       props.authenticationContext.setState({ email: state.email, token: token })
     }
-    setState(newState)
   }
 
   return (
