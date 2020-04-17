@@ -16,18 +16,17 @@ import Container from '@material-ui/core/Container'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 import Grid from '@material-ui/core/Grid'
-
-import { AvatarContainer, Button, FormControlLabel } from './Login.styled.components'
+import Switch from '@material-ui/core/Switch'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
+import { AvatarContainer, Button, FormControlLabel } from './Login.styled.components'
+
 import Copyright from '../../components/Copyright/Copyright'
+import Snackbar from '../../components/Snackbar/Snackbar'
 
 import { doesUserExists, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
-import Switch from '@material-ui/core/Switch'
 
 const initialState = {
   email: '',
@@ -44,11 +43,6 @@ const onActivatingUser = (props, state, setState) => {
       setState(update(state, { disabled: { $set: true }, snackbar: { open: { $set: true }, text: { $set: 'Usuario activado :-)' } } }))
     })
   }
-}
-
-const navigateToRoot = (props, setState) => {
-  setState(initialState)
-  props.history.push('/')
 }
 
 const Login = (props) => {
@@ -165,11 +159,13 @@ const Login = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => navigateToRoot(props, setState)}>
-        <Alert onClose={() => navigateToRoot(props, setState)} severity="success">
-          {state.snackbar.text}
-        </Alert>
-      </Snackbar>
+      <Snackbar
+        state={state}
+        onClose={() => {
+          setState(initialState)
+          props.history.push('/')
+        }}
+      />
     </Container>
   )
 }

@@ -14,12 +14,11 @@ import Box from '@material-ui/core/Box'
 import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Switch from '@material-ui/core/Switch'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
+import Snackbar from '../../components/Snackbar/Snackbar'
 
 import { AvatarContainer, Button, FormControlLabel } from './Signup.styled.component'
 
@@ -223,11 +222,7 @@ const Signup = (props) => {
       <Box mt={5}>
         <Copyright />
       </Box>
-      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
-        <Alert onClose={() => props.history.push('/')} severity="success">
-          {state.snackbar.text}
-        </Alert>
-      </Snackbar>
+      <Snackbar state={state} onClose={() => props.history.push('/')} />
     </Container>
   )
 }

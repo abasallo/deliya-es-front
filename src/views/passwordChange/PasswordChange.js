@@ -11,14 +11,13 @@ import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
-import Snackbar from '@material-ui/core/Snackbar'
-import Alert from '@material-ui/lab/Alert'
 
 import { AvatarContainer, Button } from './PasswordChange.styled.components'
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 
 import Copyright from '../../components/Copyright/Copyright'
+import Snackbar from '../../components/Snackbar/Snackbar'
 
 import { changePasswordWithToken } from '../../services/User'
 
@@ -118,11 +117,7 @@ const PasswordChange = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar open={state.snackbar.open} autoHideDuration={7000} onClose={() => props.history.push('/')}>
-        <Alert onClose={() => props.history.push('/')} severity="success">
-          {state.snackbar.text}
-        </Alert>
-      </Snackbar>
+      <Snackbar state={state} onClose={() => props.history.push('/')} />
     </Container>
   )
 }
