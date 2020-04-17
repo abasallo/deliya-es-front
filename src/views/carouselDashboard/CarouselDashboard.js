@@ -14,6 +14,8 @@ import { AppBar, Logo, HeaderLoginButtons, Container, CopyrightBox } from './Car
 import Copyright from '../../components/Copyright/Copyright'
 import Carousel from '../../components/Carousel/Carousel'
 
+import { withAuthenticationContext } from '../../withAuthenticationContext'
+
 const CarouselDashboard = (props) => {
   return (
     <React.Fragment>
@@ -21,10 +23,10 @@ const CarouselDashboard = (props) => {
         <Toolbar>
           <Logo src={logo} alt="Logo" />
           <HeaderLoginButtons>
-            <Button>{props.appState.email}</Button>
+            <Button>{props.authenticationContext.state.email}</Button>
             <Button
               onClick={() => {
-                props.setAppState({ emai: '', token: '' })
+                props.authenticationContext.setState({ email: '', token: '' })
                 props.cookies.set('email', '')
                 props.cookies.set('token', '')
               }}
@@ -45,11 +47,9 @@ const CarouselDashboard = (props) => {
 }
 
 CarouselDashboard.propTypes = {
-  appState: PropTypes.object,
-  setAppState: PropTypes.func,
-  eventState: PropTypes.object
+  authenticationContext: PropTypes.object,
+  eventState: PropTypes.object,
+  cookies: PropTypes.object
 }
 
-CarouselDashboard.propTypes = { cookies: PropTypes.object }
-
-export default withCookies(CarouselDashboard)
+export default withCookies(withAuthenticationContext(CarouselDashboard))

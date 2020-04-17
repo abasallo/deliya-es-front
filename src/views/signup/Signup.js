@@ -227,9 +227,6 @@ const Signup = (props) => {
   )
 }
 
-Signup.propTypes = {
-  appState: PropTypes.object,
-  history: PropTypes.object
-}
+Signup.propTypes = { history: PropTypes.object }
 
 export default withRouter(Signup)

@@ -27,6 +27,7 @@ import Snackbar from '../../components/Snackbar/Snackbar'
 
 import { doesUserExists, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
+import { withAuthenticationContext } from '../../withAuthenticationContext'
 
 const initialState = {
   email: '',
@@ -46,7 +47,7 @@ const onActivatingUser = (props, state, setState) => {
 }
 
 const Login = (props) => {
-  initialState.email = props.appState.email
+  initialState.email = props.authenticationContext.state.email
   const [state, setState] = useState(initialState)
 
   onActivatingUser(props, state, setState)
@@ -83,7 +84,9 @@ const Login = (props) => {
       props.cookies.set('token', token)
     }
     const newState = await checkPasswordValidity(token, await checkEmailExistence(checkEmailFormatValidity(state)))
-    if (!isStateKO(newState)) props.setAppState({ email: state.email, token: token })
+    if (!isStateKO(newState)) {
+      props.authenticationContext.setState({ email: state.email, token: token })
+    }
     setState(newState)
   }
 
@@ -175,8 +178,7 @@ Login.propTypes = {
   match: PropTypes.object,
   history: PropTypes.object,
   fromUserActivationEmail: PropTypes.string,
-  appState: PropTypes.object,
-  setAppState: PropTypes.func
+  authenticationContext: PropTypes.object
 }
 
-export default withCookies(withRouter(Login))
+export default withCookies(withRouter(withAuthenticationContext(Login)))
