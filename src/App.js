@@ -22,11 +22,13 @@ import Signup from './views/signup/Signup'
 import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
 import PasswordChange from './views/passwordChange/PasswordChange'
 
+const initialState = (props) => ({
+  email: props.cookies.get('email') ? props.cookies.get('email') : '',
+  token: props.cookies.get('token') ? props.cookies.get('token') : ''
+})
+
 const App = (props) => {
-  const [state, setState] = useState({
-    email: props.cookies.get('email') ? props.cookies.get('email') : '',
-    token: props.cookies.get('token') ? props.cookies.get('token') : ''
-  })
+  const [state, setState] = useState(initialState(props))
   return (
     <ApolloProvider client={apolloClient}>
       <MuiThemeProvider theme={customMUITheme}>

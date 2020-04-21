@@ -38,11 +38,29 @@ const initialState = {
   snackbar: { open: false, text: '' }
 }
 
-const onActivatingUser = (props, state, setState) => {
+const setStateDependingOnEmailFormatValidity = (state) =>
+  !state.email || !isEmailValid(state.email) ? update(state, { errors: { emailFormat: { $set: true } } }) : state
+
+const setStateDependingOnEmailExistence = async (state) =>
+  !state.email || !(await doesUserExists(state.email)) ? update(state, { errors: { emailExistence: { $set: true } } }) : state
+
+const setStateDependingOnPasswordValidity = (token, state) =>
+  !state.password || !token ? update(state, { errors: { password: { $set: true } } }) : state
+
+const setStateDependingOnUserActivation = (props, state, setState) => {
   if (props.fromUserActivationEmail && !state.snackbar.open) {
-    activateUser(props.match.params.token).then(() => {
+    activateUser(props.match.params.token).then(() =>
       setState(update(state, { disabled: { $set: true }, snackbar: { open: { $set: true }, text: { $set: 'Usuario activado :-)' } } }))
-    })
+    )
+  }
+}
+
+const isStateValid = (state) => state.errors.emailExistence || state.errors.emailFormat || state.errors.password
+
+const setCookiesIfRememberIsActive = (props, state, token) => {
+  if (state.remember) {
+    props.cookies.set('email', state.email)
+    props.cookies.set('token', token)
   }
 }
 
@@ -50,45 +68,32 @@ const Login = (props) => {
   initialState.email = props.authenticationContext.state.email
   const [state, setState] = useState(initialState)
 
-  onActivatingUser(props, state, setState)
+  setStateDependingOnUserActivation(props, state, setState)
 
-  const checkEmailExistence = async (state) => {
-    const userExistence = await doesUserExists(state.email)
-    if (!state.email || !userExistence) {
-      return update(state, { errors: { emailExistence: { $set: true } } })
-    }
-    return state
+  const onSnackbarClose = () => {
+    setState(initialState)
+    props.history.push('/')
   }
 
-  const checkEmailFormatValidity = (state) => {
-    if (!state.email || !isEmailValid(state.email)) {
-      return update(state, { errors: { emailFormat: { $set: true } } })
-    }
-    return state
-  }
+  const onSwitchChange = (event) => setState(update(state, { remember: { $set: event.target.checked } }))
 
-  const checkPasswordValidity = (token, state) => {
-    if (!state.password || !token) {
-      return update(state, { errors: { password: { $set: true } } })
-    }
-    return state
-  }
+  const onPasswordChange = (event) =>
+    setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))
 
-  const isStateKO = (state) => state.errors.emailExistence || state.errors.emailFormat || state.errors.password
+  const onEmailChange = (event) =>
+    setState(
+      update(state, { email: { $set: event.target.value }, errors: { emailFormat: { $set: false }, emailExistence: { $set: false } } })
+    )
 
   const onSubmit = async (event) => {
     event.preventDefault()
     const token = await login(state.email, state.password)
-    if (state.remember) {
-      props.cookies.set('email', state.email)
-      props.cookies.set('token', token)
-    }
-    const newState = await checkPasswordValidity(token, await checkEmailExistence(checkEmailFormatValidity(state)))
-    if (isStateKO(newState)) {
-      setState(newState)
-    } else {
-      props.authenticationContext.setState({ email: state.email, token: token })
-    }
+    setCookiesIfRememberIsActive(props, state, token)
+    const newState = await setStateDependingOnPasswordValidity(
+      token,
+      await setStateDependingOnEmailExistence(setStateDependingOnEmailFormatValidity(state))
+    )
+    isStateValid(newState) ? setState(newState) : props.authenticationContext.setState({ email: state.email, token: token })
   }
 
   return (
@@ -113,14 +118,7 @@ const Login = (props) => {
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={(event) =>
-            setState(
-              update(state, {
-                email: { $set: event.target.value },
-                errors: { emailFormat: { $set: false }, emailExistence: { $set: false } }
-              })
-            )
-          }
+          onChange={onEmailChange}
           error={state.errors.emailExistence || state.errors.emailFormat}
           helperText={state.errors.emailExistence || state.errors.emailFormat ? 'Correo electrónico no válido, o inexistente' : ''}
           disabled={state.disabled}
@@ -136,15 +134,13 @@ const Login = (props) => {
           type="password"
           autoComplete="current-password"
           value={state.password}
-          onChange={(event) => setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))}
+          onChange={onPasswordChange}
           error={state.errors.password}
           helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
           disabled={state.disabled}
         />
         <FormControlLabel
-          control={
-            <Switch checked={state.remember} onChange={(event) => setState(update(state, { remember: { $set: event.target.checked } }))} />
-          }
+          control={<Switch checked={state.remember} onChange={onSwitchChange} />}
           label="Recuérdame"
           disabled={state.disabled}
         />
@@ -163,13 +159,7 @@ const Login = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar
-        state={state}
-        onClose={() => {
-          setState(initialState)
-          props.history.push('/')
-        }}
-      />
+      <Snackbar state={state} onClose={onSnackbarClose} />
     </Container>
   )
 }

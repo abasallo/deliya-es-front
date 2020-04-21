@@ -25,20 +25,17 @@ import { isEmailValid } from '../../modules/email'
 
 const initialState = { email: '', disabled: false, errors: { emailExistence: false }, snackbar: { open: false, text: '' } }
 
+const setStateDependingOnEmailExistenceAndValidity = async (state) =>
+  !state.email || !(await doesUserExists(state.email)) || !isEmailValid(state.email)
+    ? update(state, { errors: { emailExistence: { $set: true } } })
+    : state
+
 const PasswordRecovery = (props) => {
   const [state, setState] = useState(initialState)
 
-  const checkEmailExistenceAndValidity = async (state) => {
-    const userExistence = await doesUserExists(state.email)
-    if (!state.email || !userExistence || !isEmailValid(state.email)) {
-      return update(state, { errors: { emailExistence: { $set: true } } })
-    }
-    return state
-  }
-
   const onSubmit = async (event) => {
     event.preventDefault()
-    let newState = await checkEmailExistenceAndValidity(state)
+    let newState = await setStateDependingOnEmailExistenceAndValidity(state)
     if (!newState.errors.emailExistence) {
       newState = update(newState, { disabled: { $set: true } })
       setState(newState)
@@ -48,6 +45,17 @@ const PasswordRecovery = (props) => {
     }
     setState(newState)
   }
+
+  const onEmailChange = (event) =>
+    setState(
+      update(state, {
+        email: { $set: event.target.value },
+        snackbar: { open: { $set: false } },
+        errors: { emailExistence: { $set: false } }
+      })
+    )
+
+  const onSnackbarClose = () => props.history.push('/')
 
   return (
     <Container component="main" maxWidth="xs">
@@ -71,15 +79,7 @@ const PasswordRecovery = (props) => {
           autoComplete="email"
           autoFocus
           value={state.email}
-          onChange={(event) =>
-            setState(
-              update(state, {
-                email: { $set: event.target.value },
-                snackbar: { open: { $set: false } },
-                errors: { emailExistence: { $set: false } }
-              })
-            )
-          }
+          onChange={onEmailChange}
           error={state.errors.emailExistence}
           helperText={state.errors.emailExistence ? 'Correo electrónico no válido, o inexistente' : ''}
           disabled={state.disabled}
@@ -91,7 +91,7 @@ const PasswordRecovery = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar state={state} onClose={() => props.history.push('/')} />
+      <Snackbar state={state} onClose={onSnackbarClose} />
     </Container>
   )
 }

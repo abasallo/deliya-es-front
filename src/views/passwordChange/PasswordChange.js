@@ -12,9 +12,9 @@ import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 
-import { AvatarContainer, Button } from './PasswordChange.styled.components'
-
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
+
+import { AvatarContainer, Button } from './PasswordChange.styled.components'
 
 import Copyright from '../../components/Copyright/Copyright'
 import Snackbar from '../../components/Snackbar/Snackbar'
@@ -25,33 +25,40 @@ const initialState = {
   password: '',
   passwordRepeated: '',
   disabled: false,
-  errors: { password: { missmatch: false, format: false } },
+  errors: { password: { mismatch: false, format: false } },
   snackbar: { open: false, text: '' }
 }
+
+const setStateToPasswordMismatch = (state) => update(state, { errors: { password: { mismatch: { $set: true } } } })
+
+const setStateToDisabledForm = (state) => update(state, { disabled: { $set: true } })
+
+const setStateToOpenSnackbarWithText = (text, state) =>
+  update(setStateToDisabledForm(state), { snackbar: { open: { $set: true }, text: { $set: text } } })
+
+const setStateDependingOnPasswordValidity = async (props, state) =>
+  state.password === state.passwordRepeated
+    ? (await changePasswordWithToken(state.password, props.match.params.token))
+      ? setStateToOpenSnackbarWithText('La contraseña ha sido cambiada con éxito.', state)
+      : setStateToOpenSnackbarWithText('Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.', state)
+    : setStateToPasswordMismatch(state)
 
 const PasswordChange = (props) => {
   const [state, setState] = useState(initialState)
 
-  const disableForm = () => update(state, { disabled: { $set: true } })
+  const onChangePassword = (event) =>
+    setState(
+      update(state, { password: { $set: event.target.value }, errors: { password: { format: { $set: event.target.value.length === 0 } } } })
+    )
 
-  const checkPasswordValidity = async (state) => {
-    if (state.password === state.passwordRepeated) {
-      if (await changePasswordWithToken(state.password, props.match.params.token)) {
-        return update(disableForm(state), {
-          snackbar: { open: { $set: true }, text: { $set: 'La contraseña ha sido cambiada con éxito.' } }
-        })
-      } else {
-        return update(disableForm(state), {
-          snackbar: { open: { $set: true }, text: { $set: 'Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.' } }
-        })
-      }
-    }
-    return update(state, { errors: { password: { missmatch: { $set: true } } } })
-  }
+  const onChangePasswordRepeated = (event) =>
+    setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { mismatch: { $set: false } } } }))
+
+  const onSnackbarClose = () => props.history.push('/')
 
   const onSubmit = async (event) => {
     event.preventDefault()
-    setState(await checkPasswordValidity(state))
+    setState(await setStateDependingOnPasswordValidity(props, state))
   }
 
   return (
@@ -77,14 +84,7 @@ const PasswordChange = (props) => {
             id="password"
             autoComplete="new-password"
             value={state.password}
-            onChange={(event) =>
-              setState(
-                update(state, {
-                  password: { $set: event.target.value },
-                  errors: { password: { format: { $set: event.target.value.length === 0 } } }
-                })
-              )
-            }
+            onChange={onChangePassword}
             error={state.errors.password.format}
             helperText={state.errors.password.format ? 'al menos un caracter' : ''}
             disabled={state.disabled}
@@ -100,13 +100,9 @@ const PasswordChange = (props) => {
             id="password-repeated"
             autoComplete="new-password"
             value={state.passwordRepeated}
-            onChange={(event) =>
-              setState(
-                update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { missmatch: { $set: false } } } })
-              )
-            }
-            error={state.errors.password.missmatch}
-            helperText={state.errors.password.missmatch ? 'no coinciden' : ''}
+            onChange={onChangePasswordRepeated}
+            error={state.errors.password.mismatch}
+            helperText={state.errors.password.mismatch ? 'no coinciden' : ''}
             disabled={state.disabled}
           />
           <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
@@ -117,7 +113,7 @@ const PasswordChange = (props) => {
       <Box mt={8}>
         <Copyright />
       </Box>
-      <Snackbar state={state} onClose={() => props.history.push('/')} />
+      <Snackbar state={state} onClose={onSnackbarClose} />
     </Container>
   )
 }

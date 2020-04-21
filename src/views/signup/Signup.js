@@ -47,32 +47,34 @@ const initialState = {
   }
 }
 
+const setStateDependingOnEmailAlreadyUsed = async (state) =>
+  state.email && (await doesUserExists(state.email)) ? update(state, { errors: { emailAlreadyUsed: { $set: true } } }) : state
+
+const setStateDependingOnCurrentFormContents = (state) =>
+  update(state, {
+    errors: {
+      names: { $set: !state.names },
+      surnames: { $set: !state.surnames },
+      email: { $set: !state.email || !isEmailValid(state.email) },
+      password: { $set: !state.password || state.password !== state.passwordRepeated }
+    }
+  })
+
+const setStateForDisabledAndActivationEmailSent = (state) =>
+  update(state, {
+    disabled: { $set: true },
+    snackbar: { open: { $set: true }, text: { $set: 'Correo de activación enviado.' } }
+  })
+
+const isStateKO = (state) =>
+  state.errors.emailAlreadyUsed || state.errors.names || state.errors.surnames || state.errors.email || state.errors.password
+
 const Signup = (props) => {
   const [state, setState] = useState(initialState)
 
-  const checkEmailAlreadyUsed = async (state) => {
-    const emailAlreadyUsed = await doesUserExists(state.email)
-    if (state.email && emailAlreadyUsed) {
-      return update(state, { errors: { emailAlreadyUsed: { $set: true } } })
-    }
-    return state
-  }
-
-  const isStateKO = (state) =>
-    state.errors.emailAlreadyUsed || state.errors.names || state.errors.surnames || state.errors.email || state.errors.password
-
   const onSubmit = async (event) => {
     event.preventDefault()
-    let newState = await checkEmailAlreadyUsed(state)
-    newState = update(newState, {
-      errors: {
-        names: { $set: !state.names },
-        surnames: { $set: !state.surnames },
-        email: { $set: !state.email || !isEmailValid(state.email) },
-        password: { $set: !state.password || state.password !== state.passwordRepeated }
-      }
-    })
-
+    const newState = setStateDependingOnCurrentFormContents(await setStateDependingOnEmailAlreadyUsed(state))
     if (!isStateKO(newState)) {
       addUser({
         names: state.names,
@@ -81,14 +83,34 @@ const Signup = (props) => {
         password: state.password,
         contactAllowed: state.contactAllowed
       }).then((user) => requestUserActivationOverEmail(user.email))
-      newState = update(newState, {
-        disabled: { $set: true },
-        snackbar: { open: { $set: true }, text: { $set: 'Correo de activación enviado.' } }
-      })
+      setState(setStateForDisabledAndActivationEmailSent(newState))
+    } else {
+      setState(newState)
     }
-
-    setState(newState)
   }
+
+  const onNamesChanged = (event) => setState(update(state, { names: { $set: event.target.value }, errors: { names: { $set: false } } }))
+
+  const onSurnamesChanged = (event) =>
+    setState(update(state, { surnames: { $set: event.target.value }, errors: { surnames: { $set: false } } }))
+
+  const onPasswordChanged = (event) =>
+    setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))
+
+  const onEmailChanged = (event) =>
+    setState(
+      update(state, {
+        email: { $set: event.target.value },
+        errors: { emailAlreadyUsed: { $set: false }, email: { $set: false } }
+      })
+    )
+
+  const onPasswordRetypedChanged = (event) =>
+    setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { passwordRepeated: { $set: false } } }))
+
+  const onSwitchChanged = (event) => setState({ ...state, contactAllowed: event.target.checked })
+
+  const onSnackbarClosed = () => props.history.push('/')
 
   return (
     <Container component="main" maxWidth="xs">
@@ -113,7 +135,7 @@ const Signup = (props) => {
               label="Nombre/s"
               autoFocus
               defaultValue={state.names}
-              onChange={(event) => setState(update(state, { names: { $set: event.target.value }, errors: { names: { $set: false } } }))}
+              onChange={onNamesChanged}
               error={state.errors.names}
               helperText={state.errors.names ? '¿cómo te llamas?' : ''}
               disabled={state.disabled}
@@ -129,9 +151,7 @@ const Signup = (props) => {
               name="surnames"
               label="Apellido/s"
               defaultValue={state.surnames}
-              onChange={(event) =>
-                setState(update(state, { surnames: { $set: event.target.value }, errors: { surnames: { $set: false } } }))
-              }
+              onChange={onSurnamesChanged}
               error={state.errors.surnames}
               helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
               disabled={state.disabled}
@@ -147,14 +167,7 @@ const Signup = (props) => {
               name="email"
               label="Correo electrónico"
               defaultValue={state.email}
-              onChange={(event) =>
-                setState(
-                  update(state, {
-                    email: { $set: event.target.value },
-                    errors: { emailAlreadyUsed: { $set: false }, email: { $set: false } }
-                  })
-                )
-              }
+              onChange={onEmailChanged}
               error={state.errors.emailAlreadyUsed || state.errors.email}
               helperText={state.errors.emailAlreadyUsed || state.errors.email ? 'no válido, o ya existente' : ''}
               disabled={state.disabled}
@@ -171,9 +184,7 @@ const Signup = (props) => {
               label="Contraseña"
               type="password"
               defaultValue={state.password}
-              onChange={(event) =>
-                setState(update(state, { password: { $set: event.target.value }, errors: { password: { $set: false } } }))
-              }
+              onChange={onPasswordChanged}
               error={!state.password}
               helperText={!state.password ? 'al menos un caracter' : ''}
               disabled={state.disabled}
@@ -190,9 +201,7 @@ const Signup = (props) => {
               label="Contraseña (otra vez)"
               type="password"
               defaultValue={state.passwordRepeated}
-              onChange={(event) =>
-                setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { passwordRepeated: { $set: false } } }))
-              }
+              onChange={onPasswordRetypedChanged}
               error={state.errors.password}
               helperText={state.errors.password ? 'no coinciden' : ''}
               disabled={state.disabled}
@@ -200,9 +209,7 @@ const Signup = (props) => {
           </Grid>
           <Grid item xs={12}>
             <FormControlLabel
-              control={
-                <Switch checked={state.contactAllowed} onChange={(event) => setState({ ...state, contactAllowed: event.target.checked })} />
-              }
+              control={<Switch checked={state.contactAllowed} onChange={onSwitchChanged} />}
               label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
               disabled={state.disabled}
             />
@@ -222,7 +229,7 @@ const Signup = (props) => {
       <Box mt={5}>
         <Copyright />
       </Box>
-      <Snackbar state={state} onClose={() => props.history.push('/')} />
+      <Snackbar state={state} onClose={onSnackbarClosed} />
     </Container>
   )
 }

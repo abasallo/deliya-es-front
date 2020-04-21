@@ -4,19 +4,25 @@ import { withCookies } from 'react-cookie'
 
 import PropTypes from 'prop-types'
 
-import logo from '../../images/logo.png'
-
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
+
+import { withAuthenticationContext } from '../../withAuthenticationContext'
+
+import logo from '../../images/logo.png'
 
 import { AppBar, Logo, HeaderLoginButtons, Container, CopyrightBox } from './CarouselDashboard.styled.components'
 
 import Copyright from '../../components/Copyright/Copyright'
 import Carousel from '../../components/Carousel/Carousel'
 
-import { withAuthenticationContext } from '../../withAuthenticationContext'
-
 const CarouselDashboard = (props) => {
+  const onClick = () => {
+    props.authenticationContext.setState({ email: '', token: '' })
+    props.cookies.set('email', '')
+    props.cookies.set('token', '')
+  }
+
   return (
     <React.Fragment>
       <AppBar position="static">
@@ -24,15 +30,7 @@ const CarouselDashboard = (props) => {
           <Logo src={logo} alt="Logo" />
           <HeaderLoginButtons>
             <Button>{props.authenticationContext.state.email}</Button>
-            <Button
-              onClick={() => {
-                props.authenticationContext.setState({ email: '', token: '' })
-                props.cookies.set('email', '')
-                props.cookies.set('token', '')
-              }}
-            >
-              Logout
-            </Button>
+            <Button onClick={onClick}>Logout</Button>
           </HeaderLoginButtons>
         </Toolbar>
       </AppBar>
