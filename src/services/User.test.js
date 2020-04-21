@@ -69,10 +69,14 @@ test('Password changed successfully', () => {
   })
 })
 
-const changeQueryMockToErrorThrowing = () =>
+const changeQueryMockToErrorThrowing = () => {
   apolloClient.query.mockImplementation(() => {
     throw new Error()
   })
+  apolloClient.mutate.mockImplementation(() => {
+    throw new Error()
+  })
+}
 
 test('Login throws exception', () => {
   changeQueryMockToErrorThrowing()
