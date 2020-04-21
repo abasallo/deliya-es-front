@@ -4,6 +4,16 @@ ReactJS - Patisserie directly from small makers to consumers
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Initial configuration
+
+In the project directory, you must copy .env.example as .env a fill missing fields and/or modify already full ones.
+
+In the project directory, you can run:
+
+### `npm install`
+
+To download dependencies into node_modules directory.
+
 ## Available Scripts
 
 In the project directory, you can run:
