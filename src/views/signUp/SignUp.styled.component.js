@@ -16,6 +16,7 @@ export const FormControlLabel = styled(MaterialUIFormControlLabel)`
   display: flex;
   flex-direction: row;
   justify-content: flex-end;
+  margin: -5px 0 15px 0;
   & span {
     font-size: 65%;
   }

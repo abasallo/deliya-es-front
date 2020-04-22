@@ -11,7 +11,6 @@ import Container from '@material-ui/core/Container'
 import Avatar from '@material-ui/core/Avatar'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
-import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Switch from '@material-ui/core/Switch'
 
@@ -20,11 +19,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright/Copyright'
 import Snackbar from '../../components/Snackbar/Snackbar'
 
-import { AvatarContainer, Button, FormControlLabel } from './Signup.styled.component'
+import { AvatarContainer, Button, FormControlLabel } from './SignUp.styled.component'
 
 import { doesUserExists, requestUserActivationOverEmail, addUser } from '../../services/User'
 
 import { isEmailValid } from '../../modules/email'
+import constants from '../../modules/constants'
 
 const initialState = {
   names: '',
@@ -63,13 +63,13 @@ const setStateDependingOnCurrentFormContents = (state) =>
 const setStateForDisabledAndActivationEmailSent = (state) =>
   update(state, {
     disabled: { $set: true },
-    snackbar: { open: { $set: true }, text: { $set: 'Correo de activación enviado.' } }
+    snackbar: { open: { $set: true }, text: { $set: constants.SIGN_UP_ACTIVATION_EMAIL_SENT_NOTIFICATION } }
   })
 
 const isStateKO = (state) =>
   state.errors.emailAlreadyUsed || state.errors.names || state.errors.surnames || state.errors.email || state.errors.password
 
-const Signup = (props) => {
+const SignUp = (props) => {
   const [state, setState] = useState(initialState)
 
   const onSubmit = async (event) => {
@@ -110,7 +110,7 @@ const Signup = (props) => {
 
   const onSwitchChanged = (event) => setState({ ...state, contactAllowed: event.target.checked })
 
-  const onSnackbarClosed = () => props.history.push('/')
+  const onSnackbarClosed = () => props.history.push(constants.PATH_ROOT)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -137,7 +137,7 @@ const Signup = (props) => {
               defaultValue={state.names}
               onChange={onNamesChanged}
               error={state.errors.names}
-              helperText={state.errors.names ? '¿cómo te llamas?' : ''}
+              helperText={state.errors.names ? constants.SIGN_UP_ERROR_MESSAGE_NAMES : ''}
               disabled={state.disabled}
             />
           </Grid>
@@ -153,7 +153,7 @@ const Signup = (props) => {
               defaultValue={state.surnames}
               onChange={onSurnamesChanged}
               error={state.errors.surnames}
-              helperText={state.errors.surnames ? '¿cómo te apellidas? :-)' : ''}
+              helperText={state.errors.surnames ? constants.SIGN_UP_ERROR_MESSAGE_SURNAMES : ''}
               disabled={state.disabled}
             />
           </Grid>
@@ -169,7 +169,7 @@ const Signup = (props) => {
               defaultValue={state.email}
               onChange={onEmailChanged}
               error={state.errors.emailAlreadyUsed || state.errors.email}
-              helperText={state.errors.emailAlreadyUsed || state.errors.email ? 'no válido, o ya existente' : ''}
+              helperText={state.errors.emailAlreadyUsed || state.errors.email ? constants.SIGN_UP_ERROR_MESSAGE_EMAIL : ''}
               disabled={state.disabled}
             />
           </Grid>
@@ -186,7 +186,7 @@ const Signup = (props) => {
               defaultValue={state.password}
               onChange={onPasswordChanged}
               error={!state.password}
-              helperText={!state.password ? 'al menos un caracter' : ''}
+              helperText={!state.password ? constants.SIGN_UP_ERROR_MESSAGE_PASSWORD : ''}
               disabled={state.disabled}
             />
           </Grid>
@@ -203,28 +203,21 @@ const Signup = (props) => {
               defaultValue={state.passwordRepeated}
               onChange={onPasswordRetypedChanged}
               error={state.errors.password}
-              helperText={state.errors.password ? 'no coinciden' : ''}
+              helperText={state.errors.password ? constants.SIGN_UP_ERROR_MESSAGE_PASSWORD_RETYPED : ''}
               disabled={state.disabled}
             />
           </Grid>
           <Grid item xs={12}>
             <FormControlLabel
               control={<Switch checked={state.contactAllowed} onChange={onSwitchChanged} />}
-              label="Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos."
+              label={constants.SIGN_UP_MESSAGE_CONTACT_ALLOWED}
               disabled={state.disabled}
             />
           </Grid>
         </Grid>
         <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
-          Enviar alta
+          {constants.SIGN_UP_SUBMIT_BUTTON}
         </Button>
-        <Grid container justify="center">
-          <Grid item>
-            <Link href="/" variant="body2">
-              ¿Ya tienes cuenta?
-            </Link>
-          </Grid>
-        </Grid>
       </form>
       <Box mt={5}>
         <Copyright />
@@ -234,6 +227,6 @@ const Signup = (props) => {
   )
 }
 
-Signup.propTypes = { history: PropTypes.object }
+SignUp.propTypes = { history: PropTypes.object }
 
-export default withRouter(Signup)
+export default withRouter(SignUp)

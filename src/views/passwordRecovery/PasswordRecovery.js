@@ -23,6 +23,8 @@ import { doesUserExists, requestPasswordRecoveryOverEmail } from '../../services
 
 import { isEmailValid } from '../../modules/email'
 
+import constants from '../../modules/constants'
+
 const initialState = { email: '', disabled: false, errors: { emailExistence: false }, snackbar: { open: false, text: '' } }
 
 const setStateDependingOnEmailExistenceAndValidity = async (state) =>
@@ -40,7 +42,9 @@ const PasswordRecovery = (props) => {
       newState = update(newState, { disabled: { $set: true } })
       setState(newState)
       if (requestPasswordRecoveryOverEmail(state.email)) {
-        newState = update(newState, { snackbar: { open: { $set: true }, text: { $set: 'Correo de recuperación de contraseña enviado.' } } })
+        newState = update(newState, {
+          snackbar: { open: { $set: true }, text: { $set: constants.PASSWORD_RECOVERY_EMAIL_SENT_NOTIFICATION } }
+        })
       }
     }
     setState(newState)
@@ -55,7 +59,7 @@ const PasswordRecovery = (props) => {
       })
     )
 
-  const onSnackbarClose = () => props.history.push('/')
+  const onSnackbarClose = () => props.history.push(constants.PATH_ROOT)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -64,7 +68,7 @@ const PasswordRecovery = (props) => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Recuperación de contraseña
+          {constants.PASSWORD_RECOVERY_CAPTION}
         </Typography>
       </AvatarContainer>
       <form noValidate onSubmit={onSubmit}>
@@ -81,11 +85,11 @@ const PasswordRecovery = (props) => {
           value={state.email}
           onChange={onEmailChange}
           error={state.errors.emailExistence}
-          helperText={state.errors.emailExistence ? 'Correo electrónico no válido, o inexistente' : ''}
+          helperText={state.errors.emailExistence ? constants.PASSWORD_RECOVERY_ERROR_MESSAGE_EMAIL : ''}
           disabled={state.disabled}
         />
         <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
-          Enviar correo de recuperación
+          {constants.PASSWORD_RECOVERY_SUBMIT_BUTTON}
         </Button>
       </form>
       <Box mt={8}>

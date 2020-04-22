@@ -20,6 +20,7 @@ import Copyright from '../../components/Copyright/Copyright'
 import Snackbar from '../../components/Snackbar/Snackbar'
 
 import { changePasswordWithToken } from '../../services/User'
+import constants from '../../modules/constants'
 
 const initialState = {
   password: '',
@@ -39,8 +40,8 @@ const setStateToOpenSnackbarWithText = (text, state) =>
 const setStateDependingOnPasswordValidity = async (props, state) =>
   state.password === state.passwordRepeated
     ? (await changePasswordWithToken(state.password, props.match.params.token))
-      ? setStateToOpenSnackbarWithText('La contraseña ha sido cambiada con éxito.', state)
-      : setStateToOpenSnackbarWithText('Error, los enlaces caducan rápidamente, vuelva a intentarlo de nuevo.', state)
+      ? setStateToOpenSnackbarWithText(constants.PASSWORD_CHANGE_NOTIFICATION_OK, state)
+      : setStateToOpenSnackbarWithText(constants.PASSWORD_CHANGE_NOTIFICATION_KO, state)
     : setStateToPasswordMismatch(state)
 
 const PasswordChange = (props) => {
@@ -54,7 +55,7 @@ const PasswordChange = (props) => {
   const onChangePasswordRepeated = (event) =>
     setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { password: { mismatch: { $set: false } } } }))
 
-  const onSnackbarClose = () => props.history.push('/')
+  const onSnackbarClose = () => props.history.push(constants.PATH_ROOT)
 
   const onSubmit = async (event) => {
     event.preventDefault()
@@ -69,7 +70,7 @@ const PasswordChange = (props) => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Cambio de contraseña
+            {constants.PASSWORD_CHANGE_CAPTION}
           </Typography>
         </AvatarContainer>
         <form noValidate onSubmit={onSubmit}>
@@ -86,7 +87,7 @@ const PasswordChange = (props) => {
             value={state.password}
             onChange={onChangePassword}
             error={state.errors.password.format}
-            helperText={state.errors.password.format ? 'al menos un caracter' : ''}
+            helperText={state.errors.password.format ? constants.PASSWORD_CHANGE_ERROR_MESSAGE_PASSWORD : ''}
             disabled={state.disabled}
           />
           <TextField
@@ -102,11 +103,11 @@ const PasswordChange = (props) => {
             value={state.passwordRepeated}
             onChange={onChangePasswordRepeated}
             error={state.errors.password.mismatch}
-            helperText={state.errors.password.mismatch ? 'no coinciden' : ''}
+            helperText={state.errors.password.mismatch ? constants.PASSWORD_CHANGE_ERROR_MESSAGE_PASSWORD_REPEATED : ''}
             disabled={state.disabled}
           />
           <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
-            Enviar nueva contraseña
+            {constants.PASSWORD_CHANGE_SUBMIT_BUTTON}
           </Button>
         </form>
       </div>

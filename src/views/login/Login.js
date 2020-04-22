@@ -29,6 +29,8 @@ import { doesUserExists, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
 import { withAuthenticationContext } from '../../withAuthenticationContext'
 
+import constants from '../../modules/constants'
+
 const initialState = {
   email: '',
   password: '',
@@ -59,8 +61,8 @@ const isStateValid = (state) => state.errors.emailExistence || state.errors.emai
 
 const setCookiesIfRememberIsActive = (props, state, token) => {
   if (state.remember) {
-    props.cookies.set('email', state.email)
-    props.cookies.set('token', token)
+    props.cookies.set(constants.COOKIE_AUTHENTICATION_EMAIL, state.email)
+    props.cookies.set(constants.COOKIE_AUTHENTICATION_TOKEN, token)
   }
 }
 
@@ -72,7 +74,7 @@ const Login = (props) => {
 
   const onSnackbarClose = () => {
     setState(initialState)
-    props.history.push('/')
+    props.history.push(constants.PATH_ROOT)
   }
 
   const onSwitchChange = (event) => setState(update(state, { remember: { $set: event.target.checked } }))
@@ -103,7 +105,7 @@ const Login = (props) => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Autenticación
+          {constants.LOGIN_CAPTION}
         </Typography>
       </AvatarContainer>
       <form noValidate onSubmit={onSubmit}>
@@ -120,7 +122,7 @@ const Login = (props) => {
           value={state.email}
           onChange={onEmailChange}
           error={state.errors.emailExistence || state.errors.emailFormat}
-          helperText={state.errors.emailExistence || state.errors.emailFormat ? 'Correo electrónico no válido, o inexistente' : ''}
+          helperText={state.errors.emailExistence || state.errors.emailFormat ? constants.LOGIN_ERROR_MESSAGE_EMAIL : ''}
           disabled={state.disabled}
         />
         <TextField
@@ -136,12 +138,12 @@ const Login = (props) => {
           value={state.password}
           onChange={onPasswordChange}
           error={state.errors.password}
-          helperText={state.errors.password ? 'Contraseña incorrecta' : ''}
+          helperText={state.errors.password ? constants.LOGIN_ERROR_MESSAGE_PASSWORD : ''}
           disabled={state.disabled}
         />
         <FormControlLabel
           control={<Switch checked={state.remember} onChange={onSwitchChange} />}
-          label="Recuérdame"
+          label={constants.LOGIN_SWITCH_REMEMBER_ME}
           disabled={state.disabled}
         />
         <Button type="submit" fullWidth variant="contained" color="primary" disabled={state.disabled}>
@@ -149,10 +151,10 @@ const Login = (props) => {
         </Button>
         <Grid container>
           <Grid item xs>
-            <Link to="/password-recovery">¿Olvidaste tu contraseña?</Link>
+            <Link to={constants.PATH_PASSWORD_RECOVERY}>{constants.LOGIN_LINK_PASSWORD_RECOVERY}</Link>
           </Grid>
           <Grid item>
-            <Link to="/signup">¿Eres nuevo? ¡Date de alta!</Link>
+            <Link to={constants.PATH_SIGN_UP}>{constants.LOGIN_LINK_SIGN_UP}</Link>
           </Grid>
         </Grid>
       </form>

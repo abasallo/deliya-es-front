@@ -18,13 +18,15 @@ import { AuthenticationContext } from './AuthenticationContext'
 
 import CarouselDashboard from './views/carouselDashboard/CarouselDashboard'
 import Login from './views/login/Login'
-import Signup from './views/signup/Signup'
+import SignUp from './views/signUp/SignUp'
 import PasswordRecovery from './views/passwordRecovery/PasswordRecovery'
 import PasswordChange from './views/passwordChange/PasswordChange'
 
+import constants from './modules/constants'
+
 const initialState = (props) => ({
-  email: props.cookies.get('email') ? props.cookies.get('email') : '',
-  token: props.cookies.get('token') ? props.cookies.get('token') : ''
+  email: props.cookies.get(constants.COOKIE_AUTHENTICATION_EMAIL) ? props.cookies.get(constants.COOKIE_AUTHENTICATION_EMAIL) : '',
+  token: props.cookies.get(constants.COOKIE_AUTHENTICATION_TOKEN) ? props.cookies.get(constants.COOKIE_AUTHENTICATION_TOKEN) : ''
 })
 
 const App = (props) => {
@@ -37,21 +39,21 @@ const App = (props) => {
           <CookiesProvider>
             <AuthenticationContext.Provider value={{ authenticationContext: { state: state, setState: (_) => setState(_) } }}>
               <Router>
-                <Suspense fallback={<div>Cargando...</div>}>
+                <Suspense fallback={<div>{constants.SUSPENSE_FALLBACK_TEXT}</div>}>
                   <Switch>
-                    <Route path="/password-change/:token">
+                    <Route path={constants.PATH_PASSWORD_CHANGE}>
                       <PasswordChange />
                     </Route>
-                    <Route path="/password-recovery">
+                    <Route path={constants.PATH_PASSWORD_RECOVERY}>
                       <PasswordRecovery />
                     </Route>
-                    <Route path="/signup">
-                      <Signup appState={state} />
+                    <Route path={constants.PATH_SIGN_UP}>
+                      <SignUp appState={state} />
                     </Route>
-                    <Route path="/user-activation/:token">
+                    <Route path={constants.PATH_USER_ACTIVATION}>
                       <Login fromUserActivationEmail="true" />
                     </Route>
-                    <Route path="/">{state.email && state.token ? <CarouselDashboard /> : <Login />}</Route>
+                    <Route path={constants.PATH_ROOT}>{state.email && state.token ? <CarouselDashboard /> : <Login />}</Route>
                   </Switch>
                 </Suspense>
               </Router>
