@@ -56,9 +56,11 @@ test('User activation requested successfully', () =>
   }))
 
 test('User added successfully', () => {
-  expect(addUser({ names: 'names', surnames: 'surnames', email: 'email', password: 'password', contactAllowed: true })).resolves.toEqual({
+  expect(
+    addUser({ names: 'names', surnames: 'surnames', email: 'email', password: 'password', isContactAllowed: true, isCook: true })
+  ).resolves.toEqual({
     mutation: ADD_USER,
-    variables: { names: 'names', surnames: 'surnames', email: 'email', password: 'password', isEmailContactAllowed: true }
+    variables: { names: 'names', surnames: 'surnames', email: 'email', password: 'password', isContactAllowed: true, isCook: true }
   })
 })
 

@@ -51,7 +51,8 @@ export const addUser = async (user) => {
         surnames: user.surnames,
         email: user.email,
         password: user.password,
-        isEmailContactAllowed: user.contactAllowed
+        isContactAllowed: user.isContactAllowed,
+        isCook: user.isCook
       }
     })
     return data.addUser

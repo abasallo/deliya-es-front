@@ -31,7 +31,8 @@ export default {
   SIGN_UP_ERROR_MESSAGE_EMAIL: 'no válido, o ya existente',
   SIGN_UP_ERROR_MESSAGE_PASSWORD: 'al menos un caracter',
   SIGN_UP_ERROR_MESSAGE_RETYPED: 'no coinciden',
-  SIGN_UP_MESSAGE_CONTACT_ALLOWED: 'Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos.',
+  SIGN_UP_MESSAGE_IS_CONTACT_ALLOWED: 'Acepto recibir inspiración, promociones y actualizaciones; en forma de correos electrónicos.',
+  SIGN_UP_MESSAGE_IS_COOK: '¡Quiero darme de alta como cocinero!',
   SIGN_UP_SUBMIT_BUTTON: 'Enviar alta',
 
   PASSWORD_RECOVERY_EMAIL_SENT_NOTIFICATION: 'Correo de recuperación de contraseña enviado.',

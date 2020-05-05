@@ -25,16 +25,17 @@ export const REQUEST_USER_ACTIVATION_URL_OVER_EMAIL = gql`
 `
 
 export const ADD_USER = gql`
-  mutation($names: String, $surnames: String, $email: String!, $password: String!, $isEmailContactAllowed: Boolean!) {
+  mutation($names: String, $surnames: String, $email: String!, $password: String!, $isContactAllowed: Boolean!, $isCook: Boolean!) {
     addUser(
-      user: { names: $names, surnames: $surnames, email: $email, password: $password, isEmailContactAllowed: $isEmailContactAllowed }
+      user: { names: $names, surnames: $surnames, email: $email, password: $password, isContactAllowed: $isContactAllowed, isCook: $isCook }
     ) {
       id
       names
       surnames
       email
       password
-      isEmailContactAllowed
+      isContactAllowed
+      isCook
     }
   }
 `

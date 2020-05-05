@@ -19,7 +19,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import Copyright from '../../components/Copyright/Copyright'
 import Snackbar from '../../components/Snackbar/Snackbar'
 
-import { AvatarContainer, Button, FormControlLabel } from './SignUp.styled.component'
+import { AvatarContainer, Button, FormControlLabel, BiggerTextFormControlLabel } from './SignUp.styled.component'
 
 import { doesUserExists, requestUserActivationOverEmail, addUser } from '../../services/User'
 
@@ -32,7 +32,8 @@ const initialState = {
   email: '',
   password: '',
   passwordRepeated: '',
-  contactAllowed: true,
+  isContactAllowed: true,
+  isCook: false,
   disabled: false,
   errors: {
     emailAlreadyUsed: false,
@@ -81,7 +82,8 @@ const SignUp = (props) => {
         surnames: state.surnames,
         email: state.email,
         password: state.password,
-        contactAllowed: state.contactAllowed
+        isContactAllowed: state.isContactAllowed,
+        isCook: state.isCook
       }).then((user) => requestUserActivationOverEmail(user.email))
       setState(setStateForDisabledAndActivationEmailSent(newState))
     } else {
@@ -108,7 +110,9 @@ const SignUp = (props) => {
   const onPasswordRetypedChanged = (event) =>
     setState(update(state, { passwordRepeated: { $set: event.target.value }, errors: { passwordRepeated: { $set: false } } }))
 
-  const onSwitchChanged = (event) => setState({ ...state, contactAllowed: event.target.checked })
+  const onIsContactAllowedSwitchChanged = (event) => setState(update(state, { isContactAllowed: { $set: event.target.checked } }))
+
+  const onIsCookSwitchChanged = (event) => setState(update(state, { isCook: { $set: event.target.checked } }))
 
   const onSnackbarClosed = () => props.history.push(constants.PATH_ROOT)
 
@@ -209,8 +213,15 @@ const SignUp = (props) => {
           </Grid>
           <Grid item xs={12}>
             <FormControlLabel
-              control={<Switch checked={state.contactAllowed} onChange={onSwitchChanged} />}
-              label={constants.SIGN_UP_MESSAGE_CONTACT_ALLOWED}
+              control={<Switch checked={state.isContactAllowed} onChange={onIsContactAllowedSwitchChanged} />}
+              label={constants.SIGN_UP_MESSAGE_IS_CONTACT_ALLOWED}
+              disabled={state.disabled}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <BiggerTextFormControlLabel
+              control={<Switch checked={state.isCook} onChange={onIsCookSwitchChanged} />}
+              label={constants.SIGN_UP_MESSAGE_IS_COOK}
               disabled={state.disabled}
             />
           </Grid>
