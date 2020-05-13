@@ -1,5 +1,6 @@
 import {
   DOES_USER_EXISTS,
+  IS_USER_A_COOK,
   LOGIN,
   REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
   REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
@@ -8,6 +9,8 @@ import {
 } from './UserQueries'
 
 test('Check user existence query must be initialized properly', () => expect(DOES_USER_EXISTS).toMatchSnapshot())
+
+test('Check if is a cook query must be initialized properly', () => expect(IS_USER_A_COOK).toMatchSnapshot())
 
 test('Login query must be initialized properly', () => expect(LOGIN).toMatchSnapshot())
 

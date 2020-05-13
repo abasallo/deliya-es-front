@@ -25,7 +25,7 @@ import { AvatarContainer, Button, FormControlLabel } from './Login.styled.compon
 import Copyright from '../../components/Copyright/Copyright'
 import Snackbar from '../../components/Snackbar/Snackbar'
 
-import { doesUserExists, login, activateUser } from '../../services/User'
+import { doesUserExists, isUserACook, login, activateUser } from '../../services/User'
 import { isEmailValid } from '../../modules/email'
 import { withAuthenticationContext } from '../../withAuthenticationContext'
 
@@ -57,12 +57,13 @@ const setStateDependingOnUserActivation = (props, state, setState) => {
   }
 }
 
-const isStateValid = (state) => state.errors.emailExistence || state.errors.emailFormat || state.errors.password
+const isStateValid = (state) => !(state.errors.emailExistence || state.errors.emailFormat || state.errors.password)
 
-const setCookiesIfRememberIsActive = (props, state, token) => {
+const setCookiesIfRememberIsActive = (props, state, token, isACook) => {
   if (state.remember) {
     props.cookies.set(constants.COOKIE_AUTHENTICATION_EMAIL, state.email)
     props.cookies.set(constants.COOKIE_AUTHENTICATION_TOKEN, token)
+    props.cookies.set(constants.COOKIE_IS_A_COOK, isACook)
   }
 }
 
@@ -90,12 +91,15 @@ const Login = (props) => {
   const onSubmit = async (event) => {
     event.preventDefault()
     const token = await login(state.email, state.password)
-    setCookiesIfRememberIsActive(props, state, token)
+    const isACook = token ? await isUserACook(state.email, token) : undefined
+    setCookiesIfRememberIsActive(props, state, token, isACook)
     const newState = await setStateDependingOnPasswordValidity(
       token,
       await setStateDependingOnEmailExistence(setStateDependingOnEmailFormatValidity(state))
     )
-    isStateValid(newState) ? setState(newState) : props.authenticationContext.setState({ email: state.email, token: token })
+    isStateValid(newState)
+      ? props.authenticationContext.setState({ email: state.email, token: token, isACook: isACook })
+      : setState(newState)
   }
 
   return (

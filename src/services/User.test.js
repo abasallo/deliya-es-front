@@ -2,6 +2,7 @@ import { apolloClient } from './graphql/apolloClient'
 
 import {
   doesUserExists,
+  isUserACook,
   login,
   requestPasswordRecoveryOverEmail,
   requestUserActivationOverEmail,
@@ -12,6 +13,7 @@ import {
 import {
   DOES_USER_EXISTS,
   ADD_USER,
+  IS_USER_A_COOK,
   LOGIN,
   REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
   REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
@@ -24,6 +26,7 @@ beforeAll(() => {
   apolloClient.query.mockImplementation((_) => ({
     data: {
       doesUserExists: { query: _.query, variables: _.variables },
+      isACook: { query: _.query, variables: _.variables },
       login: { query: _.query, variables: _.variables },
       requestPasswordRecoveryUrlOverEmail: { query: _.query, variables: _.variables },
       requestUserActivationOverEmail: { query: _.query, variables: _.variables }
@@ -39,6 +42,9 @@ beforeAll(() => {
 
 test('Check user existence successfully', () =>
   expect(doesUserExists('email')).resolves.toEqual({ query: DOES_USER_EXISTS, variables: { email: 'email' } }))
+
+test('Check if user is a cook successfully', () =>
+  expect(isUserACook('email', 'token')).resolves.toEqual({ query: IS_USER_A_COOK, variables: { email: 'email', token: 'token' } }))
 
 test('Login successfully', () =>
   expect(login('email', 'password')).resolves.toEqual({ query: LOGIN, variables: { email: 'email', password: 'password' } }))

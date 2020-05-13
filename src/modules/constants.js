@@ -3,6 +3,7 @@ export default {
 
   COOKIE_AUTHENTICATION_EMAIL: 'email',
   COOKIE_AUTHENTICATION_TOKEN: 'token',
+  COOKIE_IS_A_COOK: 'isACook',
 
   SUSPENSE_FALLBACK_TEXT: 'Cargando...',
 

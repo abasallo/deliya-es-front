@@ -2,6 +2,7 @@ import { apolloClient } from './graphql/apolloClient'
 
 import {
   DOES_USER_EXISTS,
+  IS_USER_A_COOK,
   LOGIN,
   REQUEST_PASSWORD_RECOVERY_URL_OVER_EMAIL,
   REQUEST_USER_ACTIVATION_URL_OVER_EMAIL,
@@ -13,6 +14,11 @@ import {
 export const doesUserExists = async (email) => {
   const { data } = await apolloClient.query({ query: DOES_USER_EXISTS, variables: { email: email } })
   return data.doesUserExists
+}
+
+export const isUserACook = async (email, token) => {
+  const { data } = await apolloClient.query({ query: IS_USER_A_COOK, variables: { email: email, token: token } })
+  return data.isACook
 }
 
 export const login = async (email, password) => {

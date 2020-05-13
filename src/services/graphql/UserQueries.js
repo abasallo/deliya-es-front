@@ -6,6 +6,12 @@ export const DOES_USER_EXISTS = gql`
   }
 `
 
+export const IS_USER_A_COOK = gql`
+  query($email: String, $token: String) {
+    isACook(email: $email, token: $token)
+  }
+`
+
 export const LOGIN = gql`
   query($email: String, $password: String) {
     login(email: $email, password: $password)
