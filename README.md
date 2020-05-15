@@ -80,3 +80,17 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `npm run build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+## Docker
+
+This assumes Docker and Docker Compose are installed.
+
+Also, copy and rename .env.docker.example to .env.docker and edit for configuration specifics (Database URL, Email, etc)
+
+This file contains the configuration to run the server as in production, but with a local Docker (that can be later deployed for real).
+
+DO NOT push real tokens and/or passwords to git, those included in *.example are and should be FAKE ones.
+
+### `docker-compose up`
+
+Runs containerised server using Docker
